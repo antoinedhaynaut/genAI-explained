@@ -1,4 +1,643 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>Modification in progress... Please contact Antoine Dhaynaut</body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI explained</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B50D8'/%3E%3Cpath d='M16 5 C16.8 11 18.5 12.8 27 16 C18.5 19.2 16.8 21 16 27 C15.2 21 13.5 19.2 5 16 C13.5 12.8 15.2 11 16 5 Z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F7F5;
+  --card:#FFFFFF;
+  --ink:#17222E;
+  --muted:#5B6773;
+  --cobalt:#2B50D8;
+  --cobalt-soft:#E8EDFB;
+  --teal:#0E8A7D;
+  --teal-soft:#E4F2F0;
+  --amber:#C97B10;
+  --amber-soft:#FBF0DE;
+  --line:#DFE3E7;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Newsreader',Georgia,serif;font-size:19px;line-height:1.65}
+h1,h2,h3,h4{font-family:'Archivo',sans-serif;line-height:1.15}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px}
+a{color:var(--cobalt)}
+p{margin:0 0 1.1em}
+strong{font-weight:600}
+
+/* progress bar */
+#progress{position:fixed;top:0;left:0;height:4px;background:var(--cobalt);width:0;z-index:10}
+
+/* hero */
+header{padding:72px 0 48px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
+header h1{font-size:clamp(34px,6vw,58px);font-weight:800;letter-spacing:-.02em;margin-bottom:18px}
+header .sub{font-size:21px;color:var(--muted);max-width:640px}
+.readtime{display:inline-block;margin-top:20px;font-family:var(--mono);font-size:13px;background:var(--cobalt-soft);color:var(--cobalt);padding:6px 12px;border-radius:999px}
+
+/* token demo */
+.tokendemo{margin:36px 0 0;background:var(--ink);border-radius:12px;padding:26px 28px;color:#E8EDF2;font-family:var(--mono);font-size:16px;line-height:1.9}
+.tokendemo .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8FA0B0;margin-bottom:10px}
+.tok{display:inline-block;padding:1px 5px;margin:0 1px;border-radius:4px;background:#243444}
+.tok.next{background:var(--cobalt);color:#fff}
+.cands{margin-top:14px;padding-top:14px;border-top:1px dashed #3A4A5A;font-size:14px;color:#AFC0CE}
+.cands span{display:inline-block;margin-right:16px}
+.cands b{color:#fff;font-weight:600}
+.pct{color:#7BD8C9}
+
+/* sections */
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+.partnum{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--cobalt);text-transform:uppercase;margin-bottom:10px}
+section h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.01em;margin-bottom:22px}
+section h3{font-size:21px;font-weight:700;margin:34px 0 12px}
+.term{font-family:var(--mono);font-size:.85em;background:var(--cobalt-soft);color:var(--cobalt);padding:1px 7px;border-radius:5px;white-space:nowrap}
+
+/* analogy card */
+.analogy{background:var(--teal-soft);border-left:4px solid var(--teal);border-radius:0 10px 10px 0;padding:16px 20px;margin:18px 0 22px;font-size:18px}
+.analogy .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:6px}
+
+.callout{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 10px 10px 0;padding:16px 20px;margin:18px 0 22px;font-size:18px}
+.callout .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px}
+
+.wild{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:0 10px 10px 0;padding:16px 20px;margin:18px 0 22px;font-size:17px}
+.wild .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);display:block;margin-bottom:6px}
+.wild .tag::before{content:"✦ ";color:var(--cobalt)}
+
+/* diagrams */
+figure{margin:28px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 18px 14px;overflow-x:auto}
+figcaption{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:10px;text-align:center}
+figure svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.dg-box{fill:#fff;stroke:var(--ink);stroke-width:1.5;rx:8}
+.dg-boxc{fill:var(--cobalt-soft);stroke:var(--cobalt);stroke-width:1.5}
+.dg-boxt{fill:var(--teal-soft);stroke:var(--teal);stroke-width:1.5}
+.dg-boxa{fill:var(--amber-soft);stroke:var(--amber);stroke-width:1.5}
+.dg-t{font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;fill:var(--ink)}
+.dg-s{font-family:'JetBrains Mono',monospace;font-size:10.5px;fill:var(--muted)}
+.dg-arr{stroke:var(--ink);stroke-width:1.5;fill:none;marker-end:url(#arr)}
+.dg-arrd{stroke:var(--muted);stroke-width:1.3;stroke-dasharray:4 4;fill:none;marker-end:url(#arrm)}
+
+/* trace (worked examples) */
+.trace{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:24px 0;overflow:hidden}
+.trace .prompt{background:var(--ink);color:#E8EDF2;font-family:var(--mono);font-size:15px;padding:16px 20px}
+.trace .prompt .who{color:#7BD8C9;font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:6px}
+.step{display:flex;gap:16px;padding:16px 20px;border-top:1px solid var(--line);font-size:17px}
+.step .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--cobalt);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.step .n.t{background:var(--teal)}
+.step .n.a{background:var(--amber)}
+.step h4{font-size:16px;margin-bottom:3px;font-weight:700}
+.step p{margin:0;color:var(--muted);font-size:16.5px}
+.step code{font-family:var(--mono);font-size:13.5px;background:var(--paper);padding:1px 6px;border-radius:4px;color:var(--ink)}
+
+/* cheat sheet */
+table{width:100%;border-collapse:collapse;margin:24px 0;font-size:16.5px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th{font-family:'Archivo',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;text-align:left;background:var(--ink);color:#fff;padding:12px 16px}
+td{padding:12px 16px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{font-family:var(--mono);font-size:14px;white-space:nowrap;color:var(--cobalt);font-weight:600}
+
+footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media(max-width:640px){body{font-size:17.5px}.tokendemo{padding:18px}.step{flex-direction:row}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">A field guide for Nexthinkers</div>
+    <h1>GenAI, explained.<br>No PhD required.</h1>
+    <p class="sub">What actually happens between your prompt and the answer — and what all those acronyms (LLM, RAG, MCP, A2A…) really mean.</p>
+    <p class="byline" style="font-family:var(--mono);font-size:14px;color:var(--muted);margin-top:14px">Created by Antoine Dhaynaut. Last updated on July 23rd 2026.</p>
+    <span class="readtime">≈ 10 min read</span>
+
+    <div class="howto" style="margin-top:32px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px">
+      <h3 style="font-size:17px;margin:0 0 10px">How this guide is built</h3>
+      <p style="font-size:17px;margin-bottom:14px">Each concept is presented the same way, so you always know what you are reading:</p>
+      <div class="analogy" style="margin:0 0 10px"><span class="tag">Analogy</span>A comparison with something you already know from daily life or from IT, to make the concept easy to remember.</div>
+      <div class="callout" style="margin:0 0 10px"><span class="tag">Why it matters in practice</span>The practical consequence for your work: what to watch out for, what decision it affects.</div>
+      <div class="wild" style="margin:0 0 14px"><span class="tag">Nexthink example</span>Where this concept exists in our own platform (Workspace, AI Insights, Spark…), based on the public documentation and the Global AI Hub.</div>
+      <p style="font-size:17px;margin:0">The guide goes from theory to practice: <strong>Part 0</strong> places GenAI in the AI family, <strong>Part 1</strong> explains the engine itself, <strong>Part 2</strong> shows how it connects to your data, <strong>Part 3</strong> how it takes action, and <strong>Part 4</strong> follows two real prompts through the backend. A one-table summary of all terms is at the end.</p>
+    </div>
+
+    <div class="tokendemo" aria-label="Live demo of next-token prediction">
+      <div class="label">This is all an LLM does — predict the next word, over and over:</div>
+      <div id="sentence"><span class="tok">The</span> <span class="tok">server</span> <span class="tok">went</span> <span class="tok">down</span> <span class="tok">because</span> <span class="tok">of</span> <span class="tok next" id="nexttok">a</span></div>
+      <div class="cands" id="cands">candidates → <span><b>a</b> <span class="pct">41%</span></span><span><b>the</b> <span class="pct">22%</span></span><span><b>an</b> <span class="pct">14%</span></span><span><b>network</b> <span class="pct">9%</span></span></div>
+    </div>
+  </div>
+</header>
+
+<section id="part0">
+  <div class="wrap">
+    <div class="partnum">Part 0 / The map</div>
+    <h2>ML vs GenAI: where does this all fit?</h2>
+
+    <p>"AI" gets used for everything, so let's place the terms first. <span class="term">Machine Learning</span> (ML) is the broad discipline: instead of programming explicit rules, you show a program lots of examples and let it learn the pattern itself. ML has been in production in IT for 15+ years — spam filters, anomaly detection on your network, capacity forecasting, "users like you also opened this ticket." Classic ML <strong>recognizes, classifies, and predicts</strong>: it takes data in and outputs a label, a score, or a number.</p>
+
+    <p><span class="term">GenAI</span> (Generative AI) is a recent branch of ML where the model's output is not a label but <strong>new content</strong> — text, code, images, audio. LLMs are the text-generating flavor of GenAI, and they're what this guide focuses on. Same family, different job: classic ML tells you <em>"this transaction looks fraudulent (94%)"</em>; GenAI writes the fraud-investigation summary.</p>
+
+    <figure>
+      <svg viewBox="0 0 760 380" role="img" aria-label="Nested diagram: AI contains ML, ML contains Deep Learning, which contains GenAI and LLMs">
+        <!-- concentric rings, shared centre, labels sit in the clear top band of each ring -->
+        <ellipse cx="380" cy="200" rx="360" ry="170" fill="#F4F6F8" stroke="#17222E" stroke-width="1.5"/>
+        <ellipse cx="380" cy="215" rx="290" ry="140" fill="#E4F2F0" stroke="#0E8A7D" stroke-width="1.5"/>
+        <ellipse cx="380" cy="232" rx="205" ry="105" fill="#FBF0DE" stroke="#C97B10" stroke-width="1.5"/>
+        <ellipse cx="380" cy="250" rx="120" ry="68" fill="#E8EDFB" stroke="#2B50D8" stroke-width="1.5"/>
+
+        <!-- AI: top band of outer ring -->
+        <text class="dg-t" x="380" y="52" text-anchor="middle">Artificial Intelligence</text>
+        <text class="dg-s" x="380" y="70" text-anchor="middle">any technique that imitates human ability</text>
+
+        <!-- ML: top band of second ring -->
+        <text class="dg-t" x="380" y="103" text-anchor="middle" fill="#0E8A7D">Machine Learning</text>
+        <text class="dg-s" x="380" y="120" text-anchor="middle">learns from examples, not hand-written rules</text>
+
+        <!-- Deep Learning: top band of third ring -->
+        <text class="dg-t" x="380" y="152" text-anchor="middle" fill="#C97B10">Deep Learning</text>
+        <text class="dg-s" x="380" y="169" text-anchor="middle">large neural networks</text>
+
+        <!-- GenAI: centre of innermost ring -->
+        <text class="dg-t" x="380" y="240" text-anchor="middle" fill="#2B50D8">GenAI</text>
+        <text class="dg-s" x="380" y="258" text-anchor="middle">creates new content</text>
+        <text class="dg-s" x="380" y="274" text-anchor="middle">LLMs live here</text>
+      </svg>
+      <figcaption>Every LLM is GenAI, every GenAI system is ML, every ML system is AI — never the other way around.</figcaption>
+    </figure>
+
+    <div class="analogy"><span class="tag">Analogy</span>Classic ML is a seasoned inspector: show it a thousand photos of defective parts and it will spot the next defect instantly — but it can only ever say "defect / no defect." GenAI is a craftsman: it studied the same photos and can now <em>produce</em> a report, a repair procedure, or a picture of what the fixed part should look like.</div>
+
+    <div class="callout"><span class="tag">Why it matters in practice</span>Different problems, different tools. Forecasting disk usage or scoring alert severity? That's classic ML — cheaper, faster, deterministic, and often the better choice. Summarizing incidents, drafting responses, answering questions over documentation? That's GenAI. A common architecture mistake is using an expensive LLM for a job a small ML model solves better.</div>
+  </div>
+</section>
+
+<section id="part1">
+  <div class="wrap">
+    <div class="partnum">Part 1 / The engine</div>
+    <h2>What a Large Language Model actually is</h2>
+
+    <p>A <span class="term">LLM</span> (Large Language Model) is a program that has read a colossal amount of text — most of the public internet, books, code, documentation — and from all of it learned one skill extremely well: <strong>given a sequence of words, predict what comes next.</strong> That's it. There is no database of facts inside, no reasoning engine bolted on. Everything else — answering questions, writing code, summarizing reports — emerges from doing that one prediction, billions of times, very well.</p>
+
+    <div class="analogy"><span class="tag">Analogy</span>It's a much more powerful autocomplete. Your phone predicts the next word from your last texts; an LLM predicts it from having read more text than a human could in ten thousand lifetimes. At that scale, "predicting the next word" starts to look a lot like understanding.</div>
+
+    <h3>Training vs inference: the model doesn't learn from you</h3>
+    <p>A model's life has two phases. <span class="term">Training</span> is when it learns: months of processing massive datasets on thousands of GPUs, costing tens of millions. It happens once (per version), in the lab. <span class="term">Inference</span> is when it's used: every prompt you send runs the frozen, finished model. <strong>Nothing you type changes the model.</strong> Your chats feel like the AI "remembers" only because the conversation stays on the whiteboard (see context window, below) — close the session and, from the model's point of view, you never existed.</p>
+    <div class="analogy"><span class="tag">Analogy</span>Training is medical school; inference is seeing patients. The doctor doesn't rewire their brain after each consultation — they apply what they already learned. Notes about you live in your patient file (the context), not in the doctor's neurons.</div>
+    <div class="callout"><span class="tag">Why it matters in practice</span>This answers the #1 question colleagues will ask: <em>"Does it learn from our data?"</em> By default, no — inference doesn't train the model. The real questions are contractual: does the vendor <em>log</em> your prompts, and do they <em>reuse</em> them to train future versions? Enterprise plans typically guarantee they don't; consumer free tiers may not. Check the data-usage terms, not the technology.</div>
+    <div class="wild"><span class="tag">Nexthink example</span>This is exactly what the Nexthink Global AI Hub documents: the platform's AI features use off-the-shelf LLMs via AWS Bedrock, Nexthink does not fine-tune them, and customer data is never used to train models. The features run <em>inference</em> on your telemetry; the models themselves stay frozen. When a customer asks "will our data end up in the model?", the AI Hub is the public, verifiable answer.</div>
+
+    <h3>Tokens: the LEGO bricks of language</h3>
+    <p>Models don't work with words — they work with <span class="term">tokens</span>: chunks of text of roughly 3–4 characters. "Server" is one token; "virtualization" might be three ("virtual", "iz", "ation"). Everything you send and receive is converted to tokens, and pricing, speed and limits are all measured in them. A simple rule: <strong>1,000 tokens ≈ 750 English words.</strong></p>
+
+    <h3>The context window: the model's whiteboard</h3>
+    <p>The <span class="term">context window</span> is how many tokens the model can "see" at once — your prompt, the conversation so far, any documents you pasted, plus its own answer in progress. Modern models handle 200K+ tokens (a few hundred pages).</p>
+    <div class="analogy"><span class="tag">Analogy</span>Think of a whiteboard in a meeting room. Everything on the board is available to everyone; anything that gets wiped off is simply gone. The model has no memory outside the whiteboard — when a conversation "forgets" something from an hour ago, it scrolled off the board.</div>
+    <div class="wild"><span class="tag">Nexthink example</span><strong>Workspace</strong> (powered by Nexthink Assist) is a context window in action: it keeps track of the ongoing conversation so you can refine an investigation with follow-up questions — "now only Windows 11 devices", "break it down by location" — without restarting. The conversation thread <em>is</em> the whiteboard.</div>
+
+    <h3>Inside the model: the neural network</h3>
+    <p>So what actually does the predicting? A <span class="term">neural network</span>: a very large web of simple mathematical units, loosely inspired by how neurons connect in a brain. Each unit takes numbers in, multiplies them by its own <strong>weights</strong>, and passes a number on to the next layer. Stack hundreds of these layers, connect billions of units, and the whole network becomes a giant function: tokens go in one end, and a score for every possible next token comes out the other.</p>
+    <p>Those billions of weights <em>are</em> the model — they are the only thing that changes during training. At the start they are random and the network outputs nonsense. It is then shown text with the last word hidden, asked to guess it, and every time it is wrong the weights are nudged slightly so the network would be a little less wrong next time. Repeat across trillions of examples and the weights slowly settle into values that encode grammar, facts, and patterns of reasoning — not stored as a lookup table anywhere, but spread across the whole network. This is why an LLM is often called a "black box": we know the weights, but no one can point to where a specific fact "lives."</p>
+    <div class="analogy"><span class="tag">Analogy</span>Picture the mixing desk in a recording studio, but with billions of sliders instead of a hundred. Training is the long process of adjusting every slider until the sound coming out is right. Once set, the sliders are frozen — using the model just runs signal through that fixed configuration. Nobody can say "this one slider is the guitar"; the sound comes from all of them together.</div>
+
+    <h3>Putting it together: predicting one token at a time</h3>
+    <p>Now the full picture. Your text becomes tokens, the tokens run through the neural network, and out comes a probability score for every token that could come next. The model picks one, adds it to the text, and runs the <em>entire thing again</em> to get the following token. It repeats this loop — predict, append, repeat — until the answer is complete. Watch it happen below:</p>
+
+    <figure>
+      <div id="nnviz" style="min-height:300px"></div>
+      <figcaption>One prediction cycle: tokens → neural network → probability of each candidate → pick one → repeat.</figcaption>
+    </figure>
+    <div class="callout"><span class="tag">Why it matters in practice</span>Two consequences worth carrying into a customer conversation. First, an answer is built one token at a time with no plan of the whole sentence — which is why models can start confidently and then drift. Second, because each token is chosen from a <em>probability</em>, the same prompt can give different answers (the next concept below). The fluency is real; the certainty is not guaranteed.</div>
+
+    <h3>Hallucinations: confident nonsense</h3>
+    <p>Because the model generates statistically plausible text rather than looking facts up, it will sometimes produce answers that are fluent, confident, and wrong. That's a <span class="term">hallucination</span>. It's not a bug being fixed next release — it's a direct consequence of how prediction works. The mitigations are exactly what the rest of this guide covers: give the model real data (RAG) and real tools (agents) so it doesn't have to improvise.</p>
+    <div class="callout"><span class="tag">Watch out</span>An LLM never says "I'm 40% sure" on its own. A hallucinated ITIL process reference reads exactly as confidently as a real one. Trust, but verify — especially for numbers, names, and citations.</div>
+    <div class="wild"><span class="tag">Nexthink example</span>This is why Nexthink marks every AI-generated insight with the ✦ sparkles icon and explicitly recommends validating results before acting on them. Labeling AI output and keeping a human check in the loop isn't a disclaimer — it's the standard, responsible way to ship GenAI in an enterprise product.</div>
+
+    <h3>Deterministic vs probabilistic: same prompt, different answer</h3>
+    <p>Everything you've administered until now is <strong>deterministic</strong>: same input, same output, every time. Run the script twice, get the same result twice — and if you don't, it's a bug. An LLM is <strong>probabilistic</strong>: at every step it holds a <em>distribution</em> of candidate next tokens (as in the demo at the top) and picks among the likely ones with a dose of randomness. Ask the same question twice and you'll get two differently-worded — sometimes differently-structured — answers. That's not a malfunction; it's the design.</p>
+    <p>The dose of randomness is a setting called <span class="term">temperature</span>. Low temperature (near 0) makes the model almost always pick the top candidate: consistent, repeatable, a bit flat — what you want for classification, extraction, or code. High temperature lets it explore less likely tokens: more varied and creative, but less predictable — good for brainstorming and writing.</p>
+    <div class="analogy"><span class="tag">Analogy</span>A deterministic system is a vending machine: B4 gives you the same snack every single time. An LLM is a good chef: order the same dish twice and it will be recognizably the same dish, but never molecule-for-molecule identical. Temperature is how much you let the chef improvise.</div>
+    <div class="callout"><span class="tag">Why it matters in practice</span>You can't test GenAI like a script — asserting on exact output will fail. You evaluate it like you'd evaluate a person's work: on samples, against criteria ("is it accurate? grounded? in policy?"). And for anything compliance-critical, you pin the temperature down and add checks around the output.</div>
+
+    <h3>Fine-tuning: onboarding the new hire</h3>
+    <p><span class="term">Fine-tuning</span> means taking a trained model and training it a bit more on your own examples — support tickets, your writing style, your product docs — so the behavior becomes second nature. It changes the model itself, which is powerful but heavy. In practice, most companies get further with a good prompt plus RAG (next part) and only fine-tune when they need consistent style or a specialized domain at scale.</p>
+    <div class="analogy"><span class="tag">Analogy</span>RAG is handing a smart consultant your binder of documentation before the meeting. Fine-tuning is sending them to a three-week internal training. The consultant with the binder is cheaper, faster to update, and usually good enough.</div>
+
+    <h3>Multimodal: beyond text</h3>
+    <p>Early LLMs only handled text. A <span class="term">multimodal</span> model also takes images, audio, video, or documents as input — and increasingly produces them as output. Under the hood it's the same trick: a screenshot is converted into tokens the model can process alongside your words. Practically, this is huge for IT: paste a screenshot of an error dialog, a photo of a rack, or an architecture diagram, and ask questions about it directly — no transcribing.</p>
+    <div class="analogy"><span class="tag">Analogy</span>A text-only model is a brilliant colleague you can only reach by chat. A multimodal one is on a video call: you can share your screen and just say "look at this."</div>
+    <div class="wild"><span class="tag">Nexthink example</span>Workspace accepts image attachments in a conversation: paste a screenshot of an error or a dashboard, and Assist uses it as context for its answer — the multimodal "screen-share" pattern, live in the product.</div>
+
+    <h3>Open-weight vs proprietary: the build-vs-buy of AI</h3>
+    <p>A <span class="term">proprietary</span> model (GPT, Claude, Gemini) is used through the vendor's API or apps: state-of-the-art quality, zero infrastructure, but your prompts transit the vendor's cloud and you pay per token. An <span class="term">open-weight</span> model (Llama, Mistral, Qwen…) can be downloaded and run on your own servers: full data control, no per-token fees, works air-gapped — but you own the GPUs, the ops, the updates, and quality typically trails the frontier models. Most enterprises end up hybrid: proprietary via API for general use, open-weight self-hosted where data can't leave.</p>
+    <div class="analogy"><span class="tag">Analogy</span>It's SaaS vs self-hosted, exactly like the choice you've already made for email, CRM or monitoring. Same trade-off triangle: convenience and cutting-edge features vs control, sovereignty and predictable cost.</div>
+    <div class="wild"><span class="tag">Nexthink example</span>There's a third way, and Nexthink uses it: consuming models through a managed cloud service (AWS Bedrock) running inside Nexthink's own AWS environment, in the customer's geographic region. You get frontier-class models <em>and</em> data residency — a pattern worth knowing when customers raise sovereignty concerns.</div>
+  </div>
+</section>
+
+<section id="part2">
+  <div class="wrap">
+    <div class="partnum">Part 2 / Grounding it in your data</div>
+    <h2>Embeddings, vector databases &amp; RAG</h2>
+
+    <p>Out of the box, an LLM knows nothing about <em>your</em> company: not your runbooks, not your pricing, not last Tuesday's incident. And its knowledge stops at its training cutoff date. The fix is not to retrain the model — it's to fetch the right documents at question time and put them on the whiteboard. That pattern is called <span class="term">RAG</span>: Retrieval-Augmented Generation.</p>
+
+    <h3>Embeddings: GPS coordinates for meaning</h3>
+    <p>To fetch "the right documents," you need search that understands meaning, not just keywords. An <span class="term">embedding</span> converts a piece of text into a long list of numbers (a vector) that captures what it's <em>about</em>. Texts with similar meaning land close together in that number space: "the laptop won't boot" ends up near "PC fails to start", even though they share almost no words.</p>
+
+    <h3>Vector database: a library sorted by meaning</h3>
+    <p>A <span class="term">vector database</span> stores those embeddings and answers one question fast: "here's a vector — find the stored vectors closest to it." Chunk your documentation, embed each chunk, store the vectors, and you can retrieve the most relevant paragraphs for any question in milliseconds.</p>
+    <div class="analogy"><span class="tag">Analogy</span>A normal database is a library sorted alphabetically — great if you know the exact title. A vector database is a library where books about similar topics physically sit next to each other, so you walk to "printer problems" and every relevant book is on that shelf, whatever its title.</div>
+
+    <h3>Putting it together: RAG</h3>
+    <figure>
+      <svg viewBox="0 0 800 260" role="img" aria-label="RAG pipeline diagram">
+        <defs>
+          <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#17222E"/></marker>
+          <marker id="arrm" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#5B6773"/></marker>
+        </defs>
+        <rect class="dg-box" x="10" y="95" width="130" height="64" rx="8"/>
+        <text class="dg-t" x="75" y="122" text-anchor="middle">Your question</text>
+        <text class="dg-s" x="75" y="140" text-anchor="middle">"VPN policy?"</text>
+
+        <rect class="dg-box dg-boxt" x="200" y="95" width="140" height="64" rx="8"/>
+        <text class="dg-t" x="270" y="122" text-anchor="middle">Embed it</text>
+        <text class="dg-s" x="270" y="140" text-anchor="middle">text → vector</text>
+
+        <rect class="dg-box dg-boxt" x="400" y="95" width="160" height="64" rx="8"/>
+        <text class="dg-t" x="480" y="122" text-anchor="middle">Vector DB search</text>
+        <text class="dg-s" x="480" y="140" text-anchor="middle">top 5 similar chunks</text>
+
+        <rect class="dg-box dg-boxc" x="620" y="30" width="170" height="90" rx="8"/>
+        <text class="dg-t" x="705" y="62" text-anchor="middle">LLM</text>
+        <text class="dg-s" x="705" y="82" text-anchor="middle">question + chunks</text>
+        <text class="dg-s" x="705" y="98" text-anchor="middle">on the whiteboard</text>
+
+        <rect class="dg-box" x="620" y="170" width="170" height="64" rx="8"/>
+        <text class="dg-t" x="705" y="197" text-anchor="middle">Grounded answer</text>
+        <text class="dg-s" x="705" y="215" text-anchor="middle">with sources</text>
+
+        <path class="dg-arr" d="M140,127 L196,127"/>
+        <path class="dg-arr" d="M340,127 L396,127"/>
+        <path class="dg-arr" d="M560,115 L616,85"/>
+        <path class="dg-arr" d="M705,120 L705,166"/>
+        <path class="dg-arrd" d="M75,95 C75,40 400,40 616,60"/>
+        <text class="dg-s" x="300" y="32">original question also goes to the LLM</text>
+      </svg>
+      <figcaption>RAG = search first, then answer using what was found — an exam where you are allowed to use your books.</figcaption>
+    </figure>
+
+    <p>Why it matters: the model answers from <strong>your current documents</strong>, can cite its sources, and updating knowledge means updating a document — not retraining a model. This is the single most common pattern in enterprise GenAI today, and it's what most "chat with your data" products are underneath.</p>
+    <div class="wild"><span class="tag">Nexthink example</span>Ask Workspace a question and Assist retrieves before it answers: it queries Nexthink documentation, Infinity configuration objects (dashboards, library packs) and live data via NQL, then composes a grounded response with links to the underlying investigations. And <strong>AI Insights</strong> follows the same grounding principle with telemetry instead of documents: the impact analysis on an alert or the tooltip in Network View is generated <em>from real collected data</em> placed in the model's context — which is why it can explain root cause instead of guessing.</div>
+  </div>
+</section>
+
+<section id="part3">
+  <div class="wrap">
+    <div class="partnum">Part 3 / From answering to acting</div>
+    <h2>Agentic AI, MCP &amp; Agent2Agent</h2>
+
+    <h3>Agentic: giving the model hands</h3>
+    <p>A plain LLM can only talk. An <span class="term">agent</span> is an LLM placed inside a loop and given <strong>tools</strong> — search the web, query a database, call an API, run code, send an email. The loop looks like: <em>think → pick a tool → use it → look at the result → decide the next step → repeat until done.</em> "<span class="term">Agentic</span>" describes systems built this way: the model doesn't just answer, it plans and executes multi-step work, adjusting as results come in.</p>
+    <div class="analogy"><span class="tag">Analogy</span>A plain LLM is a brilliant consultant on the phone: great advice, but they can't touch anything. An agent is the same consultant sitting at a workstation with your apps open — they can check the ticket queue, run the query, and draft the reply themselves.</div>
+
+    <figure>
+      <svg viewBox="0 0 760 400" role="img" aria-label="Agent loop: think, choose a tool, run it, read the result, repeat until done">
+        <defs>
+          <marker id="arrb" markerWidth="10" markerHeight="10" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#2B50D8"/></marker>
+        </defs>
+
+        <!-- four stages around a cycle -->
+        <!-- top: Think -->
+        <rect x="280" y="20" width="200" height="66" rx="10" fill="#E8EDFB" stroke="#2B50D8" stroke-width="1.5"/>
+        <text class="dg-t" x="380" y="48" text-anchor="middle" fill="#2B50D8">1 · Think</text>
+        <text class="dg-s" x="380" y="67" text-anchor="middle">what's the next step?</text>
+
+        <!-- right: Choose a tool -->
+        <rect x="530" y="167" width="200" height="66" rx="10" fill="#fff" stroke="#17222E" stroke-width="1.5"/>
+        <text class="dg-t" x="630" y="195" text-anchor="middle">2 · Choose a tool</text>
+        <text class="dg-s" x="630" y="214" text-anchor="middle">search · query · act</text>
+
+        <!-- bottom: Tool runs -->
+        <rect x="280" y="314" width="200" height="66" rx="10" fill="#FBF0DE" stroke="#C97B10" stroke-width="1.5"/>
+        <text class="dg-t" x="380" y="342" text-anchor="middle" fill="#C97B10">3 · Tool runs</text>
+        <text class="dg-s" x="380" y="361" text-anchor="middle">real action in a real system</text>
+
+        <!-- left: Read result -->
+        <rect x="30" y="167" width="200" height="66" rx="10" fill="#E4F2F0" stroke="#0E8A7D" stroke-width="1.5"/>
+        <text class="dg-t" x="130" y="195" text-anchor="middle" fill="#0E8A7D">4 · Read the result</text>
+        <text class="dg-s" x="130" y="214" text-anchor="middle">add it to the whiteboard</text>
+
+        <!-- clockwise arrows between stages -->
+        <path d="M480,60 C560,72 615,110 630,163" fill="none" stroke="#2B50D8" stroke-width="2" marker-end="url(#arrb)"/>
+        <path d="M630,233 C615,290 560,318 484,338" fill="none" stroke="#2B50D8" stroke-width="2" marker-end="url(#arrb)"/>
+        <path d="M280,346 C200,332 145,292 130,237" fill="none" stroke="#2B50D8" stroke-width="2" marker-end="url(#arrb)"/>
+        <path d="M130,163 C145,110 200,72 276,58" fill="none" stroke="#2B50D8" stroke-width="2" marker-end="url(#arrb)"/>
+
+        <!-- centre: repeat + exit -->
+        <text class="dg-t" x="380" y="195" text-anchor="middle" fill="#5B6773" font-size="15">repeat the loop</text>
+        <text class="dg-s" x="380" y="214" text-anchor="middle">until the goal is met</text>
+
+        <!-- exit arrow from Think to final answer -->
+        <path d="M380,86 L380,120" fill="none" stroke="#5B6773" stroke-width="1.5" stroke-dasharray="5 4"/>
+      </svg>
+      <figcaption>The agent loop runs clockwise — Think → Choose a tool → Tool runs → Read the result — and repeats. When step 1 decides the goal is met, the loop ends and the agent gives its final answer.</figcaption>
+    </figure>
+    <div class="wild"><span class="tag">Nexthink example</span><strong>Spark</strong> is this loop shipped as a product: a personal IT agent that understands an employee's issue in natural language, reasons over live device context from Infinity, pulls from knowledge sources (KB articles, past ticket insights, the automation catalog), then <em>acts</em> — proposing manual steps or running IT-approved remediations, and escalating to the service desk with full context when it can't resolve. Note the design choices that make an enterprise agent trustworthy: every action is pre-approved by IT, governed by policy guardrails, and fully logged. Autonomy without a black box.</div>
+
+    <h3>MCP: one standard to connect AI to your systems</h3>
+    <p>Historically, every tool connection was a custom integration: your CRM one way, your ticketing system another, each AI vendor requiring its own connector. <span class="term">MCP</span> (Model Context Protocol) is an open standard that fixes this. A system exposes its capabilities once as an "MCP server" ("I can search tickets, create tickets, read a knowledge base"), and <strong>any</strong> MCP-compatible AI can plug in and use them — no custom integration code for every AI-tool pairing.</p>
+
+    <h3>Agent2Agent (A2A): agents talking to each other</h3>
+    <p>MCP connects an agent to <em>tools</em>. <span class="term">Agent2Agent</span> (A2A) is a protocol for agents to talk to <em>other agents</em> — discover what another agent can do, hand off a task, and get results back, even across vendors and companies. Picture a procurement agent asking a supplier's agent for a quote, or an IT agent delegating a network diagnosis to a specialized network agent.</p>
+    <div class="analogy"><span class="tag">Analogy</span>MCP gives one employee access to the tools on their desk. A2A is the company org chart and email system: it lets specialized colleagues find each other, delegate, and collaborate on a job too big for one person.</div>
+
+    <div class="callout" style="border-left-color:var(--cobalt);background:var(--cobalt-soft);margin-top:34px"><span class="tag" style="color:var(--cobalt)">The thread to remember</span>An LLM only predicts text. Everything trustworthy about modern AI — real data (RAG), real actions (agents, MCP), real collaboration (A2A) — comes from the system built <em>around</em> that predictor.</div>
+  </div>
+</section>
+
+<section id="part4">
+  <div class="wrap">
+    <div class="partnum">Part 4 / In the backend</div>
+    <h2>Two prompts, explained step by step</h2>
+    <p>Same chat box, radically different machinery behind it. Here's what actually runs in the backend for a simple prompt versus an agentic one.</p>
+
+    <h3>Example 1 — Pure LLM (no tools, no data)</h3>
+    <div class="trace">
+      <div class="prompt"><span class="who">You type</span>"Write a short apology email to a customer whose migration was delayed by two days."</div>
+      <div class="step"><div class="n">1</div><div><h4>Tokenization</h4><p>Your sentence is split into ~20 tokens and converted to numbers. A hidden <strong>system prompt</strong> (the assistant's standing instructions: tone, rules, format) is placed on the whiteboard before your message.</p></div></div>
+      <div class="step"><div class="n">2</div><div><h4>One giant prediction pass</h4><p>The model computes probabilities for the first token of the reply. From everything it has read, after an instruction like this, replies overwhelmingly start with something like <code>Subject:</code> or <code>Dear</code>.</p></div></div>
+      <div class="step"><div class="n">3</div><div><h4>Loop, one token at a time</h4><p>The chosen token is appended to the whiteboard, and the model predicts the next one. Repeat a few hundred times. That's why answers <em>stream</em> word by word — you're literally watching the loop run.</p></div></div>
+      <div class="step"><div class="n">4</div><div><h4>Done</h4><p>The model emits a special "stop" token. Total time: 2–5 seconds. <strong>Nothing was looked up.</strong> The email is good because millions of apology emails shaped the model's sense of what one looks like.</p></div></div>
+    </div>
+
+    <h3>Example 2 — Agentic + RAG (tools and your data)</h3>
+    <div class="trace">
+      <div class="prompt"><span class="who">You type</span>"How many P1 incidents did we have last month, and what does our runbook say about the most frequent root cause?"</div>
+      <div class="step"><div class="n">1</div><div><h4>Plan</h4><p>The LLM reads the question plus a list of tools it's been given (via MCP, for example: <code>query_itsm</code>, <code>search_runbooks</code>). It decides this needs two steps and can't be answered from memory.</p></div></div>
+      <div class="step"><div class="n a">2</div><div><h4>Tool call #1 — live data</h4><p>It emits a structured request: <code>query_itsm(priority="P1", period="last_month")</code>. The platform executes it against the real ITSM system and pastes the result — <code>17 incidents, top cause: expired certificates (6)</code> — onto the whiteboard.</p></div></div>
+      <div class="step"><div class="n t">3</div><div><h4>Tool call #2 — RAG</h4><p>Now it calls <code>search_runbooks("expired certificate renewal procedure")</code>. Behind that tool: the query is embedded, the vector DB returns the 3 closest runbook chunks, and those paragraphs land on the whiteboard too.</p></div></div>
+      <div class="step"><div class="n">4</div><div><h4>Verify &amp; synthesize</h4><p>The model now answers using only what's on the whiteboard: "17 P1s; most frequent cause was expired certificates (6 cases); the runbook prescribes… <em>[source: cert-renewal-runbook §3]</em>." The numbers are real because they were fetched, not remembered.</p></div></div>
+      <div class="step"><div class="n">5</div><div><h4>The difference</h4><p>Ask Example 1's setup this question and it will <strong>hallucinate a plausible number</strong>. Ask Example 2's and it retrieves the truth. Same model — the architecture around it makes it trustworthy.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="cheatsheet">
+  <div class="wrap">
+    <div class="partnum">Appendix</div>
+    <h2>The one-table cheat sheet</h2>
+    <table>
+      <thead><tr><th>Term</th><th>In one sentence</th></tr></thead>
+      <tbody>
+        <tr><td>ML</td><td>Programs that learn patterns from examples instead of hand-written rules; outputs labels, scores, predictions.</td></tr>
+        <tr><td>GenAI</td><td>The branch of ML whose output is new content — text, code, images — rather than a classification.</td></tr>
+        <tr><td>LLM</td><td>A model trained on massive text to predict the next token, over and over.</td></tr>
+        <tr><td>Token</td><td>The chunk of text (~3–4 chars) models actually read, write, and bill by.</td></tr>
+        <tr><td>Context window</td><td>The maximum amount of text the model can consider at once.</td></tr>
+        <tr><td>Hallucination</td><td>A fluent, confident answer that happens to be wrong.</td></tr>
+        <tr><td>Temperature</td><td>The randomness dial: low = consistent and repeatable, high = varied and creative.</td></tr>
+        <tr><td>Training / inference</td><td>Training builds the model once in the lab; inference is every use of the frozen model. Prompts don't retrain it.</td></tr>
+        <tr><td>Fine-tuning</td><td>Extra training on your examples to change the model's default behavior.</td></tr>
+        <tr><td>Multimodal</td><td>A model that also understands images, audio, and documents, not just text.</td></tr>
+        <tr><td>Open-weight vs proprietary</td><td>Self-host a downloadable model for control, or use a vendor's frontier model via API for quality and convenience.</td></tr>
+        <tr><td>Embedding</td><td>Text converted to numbers so that similar meanings are numerically close.</td></tr>
+        <tr><td>Vector database</td><td>A store optimized for "find me content similar to this."</td></tr>
+        <tr><td>RAG</td><td>Retrieve relevant documents first, then let the LLM answer from them.</td></tr>
+        <tr><td>Agent / Agentic</td><td>An LLM in a loop with tools: plan, act, observe, repeat.</td></tr>
+        <tr><td>MCP</td><td>Open standard connecting any AI to any tool or data source, built once.</td></tr>
+        <tr><td>Agent2Agent</td><td>Protocol for agents to discover each other and delegate tasks.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>GenAI explained — created by Antoine Dhaynaut. Last updated on July 23rd 2026.</p>
+  </div>
+</footer>
+
+<script>
+// reading progress bar
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+},{passive:true});
+
+// token demo animation
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const seq=[
+    {t:'a',c:[['a','41%'],['the','22%'],['an','14%'],['network','9%']]},
+    {t:'failed',c:[['failed','38%'],['power','19%'],['bad','12%'],['corrupted','8%']]},
+    {t:'disk',c:[['disk','44%'],['update','21%'],['certificate','13%'],['fan','6%']]},
+    {t:'.',c:[['.','61%'],[',','17%'],['array','9%'],['controller','5%']]}
+  ];
+  let i=0;
+  const s=document.getElementById('sentence'),c=document.getElementById('cands');
+  setInterval(()=>{
+    const cur=document.getElementById('nexttok');
+    if(cur){cur.classList.remove('next');cur.removeAttribute('id');}
+    if(i>=seq.length){ // reset
+      s.innerHTML='<span class="tok">The</span> <span class="tok">server</span> <span class="tok">went</span> <span class="tok">down</span> <span class="tok">because</span> <span class="tok">of</span> <span class="tok next" id="nexttok">a</span>';
+      c.innerHTML='candidates → <span><b>a</b> <span class="pct">41%</span></span><span><b>the</b> <span class="pct">22%</span></span><span><b>an</b> <span class="pct">14%</span></span><span><b>network</b> <span class="pct">9%</span></span>';
+      i=1;return;
+    }
+    const step=seq[i];
+    s.insertAdjacentHTML('beforeend',' <span class="tok next" id="nexttok">'+step.t+'</span>');
+    c.innerHTML='candidates → '+step.c.map(x=>'<span><b>'+x[0]+'</b> <span class="pct">'+x[1]+'</span></span>').join('');
+    i++;
+  },1800);
+})();
+
+// ===== Next-token prediction 2D animation =====
+(function(){
+  const host=document.getElementById('nnviz');
+  if(!host) return;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const W=800,H=300;
+  const svgNS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(svgNS,'svg');
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.setAttribute('width','100%');
+  svg.style.maxWidth='100%';
+  host.appendChild(svg);
+
+  // scenario: prompt tokens, then a fixed sequence of predicted tokens with candidate distributions
+  const promptTok=['The','printer','is','not'];
+  const seq=[
+    {pick:'working', cands:[['working',52],['responding',24],['printing',15],['available',9]]},
+    {pick:'because', cands:[['because',46],['and',22],['so',18],['—',14]]},
+    {pick:'the', cands:[['the',58],['a',20],['its',13],['of',9]]},
+    {pick:'driver', cands:[['driver',49],['queue',26],['spooler',15],['cable',10]]},
+    {pick:'crashed', cands:[['crashed',44],['is',28],['stopped',18],['failed',10]]}
+  ];
+
+  function el(tag,attrs){const e=document.createElementNS(svgNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+  function txt(x,y,s,cls,anchor){const t=el('text',{x:x,y:y,class:cls,'text-anchor':anchor||'middle'});t.textContent=s;return t;}
+
+  // layout zones
+  const inputX=20, nnX=300, nnW=200, outX=560;
+
+  // draw the neural network glyph (3 layers of nodes) once
+  const nnLayers=[4,6,6,4];
+  const nnNodes=[];
+  const nnTop=70, nnBot=230;
+  nnLayers.forEach((count,li)=>{
+    const lx=nnX+ (li/(nnLayers.length-1))*nnW;
+    const col=[];
+    for(let n=0;n<count;n++){
+      const ny=nnTop+(count===1?0.5:n/(count-1))*(nnBot-nnTop);
+      col.push({x:lx,y:ny});
+    }
+    nnNodes.push(col);
+  });
+  // edges
+  const edges=[];
+  for(let li=0;li<nnNodes.length-1;li++){
+    nnNodes[li].forEach(a=>{
+      nnNodes[li+1].forEach(b=>{
+        const line=el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#DFE3E7','stroke-width':1});
+        svg.appendChild(line); edges.push(line);
+      });
+    });
+  }
+  // nodes
+  const nodeEls=[];
+  nnNodes.forEach(col=>col.forEach(p=>{
+    const c=el('circle',{cx:p.x,cy:p.y,r:6,fill:'#fff',stroke:'#2B50D8','stroke-width':1.5});
+    svg.appendChild(c); nodeEls.push(c);
+  }));
+  svg.appendChild(txt(nnX+nnW/2,255,'neural network','dg-s'));
+  svg.appendChild(txt(nnX+nnW/2,50,'runs every cycle','dg-s'));
+
+  // static labels
+  svg.appendChild(txt(inputX+70,50,'text so far (tokens)','dg-s','middle'));
+  svg.appendChild(txt(outX+110,50,'probability of next token','dg-s','middle'));
+
+  // groups that get redrawn each cycle
+  const inG=el('g',{}); svg.appendChild(inG);
+  const outG=el('g',{}); svg.appendChild(outG);
+
+  let tokens=promptTok.slice();
+  let step=0;
+
+  function renderTokens(highlightLast){
+    while(inG.firstChild) inG.removeChild(inG.firstChild);
+    let y=75; const x=inputX; const maxw=150;
+    // wrap tokens into lines
+    let line=0, lx=x;
+    tokens.forEach((tk,idx)=>{
+      const w=Math.max(28, tk.length*8+14);
+      if(lx+w>x+maxw){ line++; lx=x; }
+      const ty=75+line*30;
+      const isNew=highlightLast&&idx===tokens.length-1;
+      const r=el('rect',{x:lx,y:ty,width:w,height:22,rx:5,
+        fill:isNew?'#2B50D8':'#243444',stroke:'none'});
+      inG.appendChild(r);
+      const t=txt(lx+w/2,ty+16,tk,'');
+      t.setAttribute('fill','#fff');t.setAttribute('font-family','JetBrains Mono, monospace');t.setAttribute('font-size','12');
+      inG.appendChild(t);
+      lx+=w+6;
+    });
+  }
+
+  function renderCandidates(cands,picked){
+    while(outG.firstChild) outG.removeChild(outG.firstChild);
+    const barX=outX, barY=70, rowH=42, maxBar=150;
+    cands.forEach((c,i)=>{
+      const y=barY+i*rowH;
+      const isPick=picked!==undefined? (c[0]===picked): (i===0);
+      // label
+      const lbl=txt(barX,y+14,c[0],'');
+      lbl.setAttribute('text-anchor','start');
+      lbl.setAttribute('font-family','JetBrains Mono, monospace');
+      lbl.setAttribute('font-size','13');
+      lbl.setAttribute('fill',isPick?'#2B50D8':'#17222E');
+      lbl.setAttribute('font-weight',isPick?'700':'400');
+      outG.appendChild(lbl);
+      // bar track
+      outG.appendChild(el('rect',{x:barX,y:y+20,width:maxBar,height:10,rx:5,fill:'#EEF1F4'}));
+      // bar fill
+      const bar=el('rect',{x:barX,y:y+20,width:0,height:10,rx:5,fill:isPick?'#2B50D8':'#B9C3CE'});
+      outG.appendChild(bar);
+      // pct
+      const pct=txt(barX+maxBar+8,y+29,c[1]+'%','');
+      pct.setAttribute('text-anchor','start');
+      pct.setAttribute('font-family','JetBrains Mono, monospace');
+      pct.setAttribute('font-size','12');
+      pct.setAttribute('fill',isPick?'#2B50D8':'#5B6773');
+      outG.appendChild(pct);
+      // animate width
+      if(reduce){ bar.setAttribute('width', (c[1]/60*maxBar)); }
+      else{
+        const target=c[1]/60*maxBar;
+        let t0=null;
+        function grow(ts){ if(!t0)t0=ts; const p=Math.min(1,(ts-t0)/500);
+          bar.setAttribute('width', target*p); if(p<1) requestAnimationFrame(grow);}
+        requestAnimationFrame(grow);
+      }
+    });
+  }
+
+  function pulseNetwork(cb){
+    if(reduce){ cb&&cb(); return; }
+    let i=0;
+    function wave(){
+      // light up a column
+      nodeEls.forEach(n=>n.setAttribute('fill','#fff'));
+      const cols=nnNodes.map(c=>c.length);
+      let idx=0, start=0;
+      for(let li=0;li<nnNodes.length;li++){
+        if(li===i){ for(let k=0;k<nnNodes[li].length;k++){ nodeEls[start+k].setAttribute('fill','#2B50D8'); } }
+        start+=cols[li];
+      }
+      i++;
+      if(i<nnNodes.length){ setTimeout(wave,180); }
+      else{ setTimeout(()=>{ nodeEls.forEach(n=>n.setAttribute('fill','#fff')); cb&&cb(); },200); }
+    }
+    wave();
+  }
+
+  function cycle(){
+    const s=seq[step%seq.length];
+    renderTokens(false);
+    renderCandidates(s.cands, undefined); // show distribution, none picked yet visually
+    pulseNetwork(()=>{
+      // reveal pick
+      renderCandidates(s.cands, s.pick);
+      setTimeout(()=>{
+        tokens.push(s.pick);
+        if(tokens.length>10) tokens=promptTok.slice(); // reset visual length
+        renderTokens(true);
+        step++;
+        if(step%seq.length===0){ // full reset after a sentence
+          setTimeout(()=>{ tokens=promptTok.slice(); renderTokens(false); setTimeout(cycle,900); },1200);
+        } else {
+          setTimeout(cycle,1100);
+        }
+      },900);
+    });
+  }
+
+  renderTokens(false);
+  renderCandidates(seq[0].cands, undefined);
+  if(reduce){
+    // static: show one full cycle result
+    renderCandidates(seq[0].cands, seq[0].pick);
+    tokens.push(seq[0].pick); renderTokens(true);
+  } else {
+    setTimeout(cycle,600);
+  }
+})();
+</script>
+</body>
 </html>
