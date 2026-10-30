@@ -21,12 +21,13 @@
   --amber-soft:#FBF0DE;
   --line:#DFE3E7;
   --mono:'JetBrains Mono',monospace;
+  --navw:232px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--paper);color:var(--ink);font-family:'Newsreader',Georgia,serif;font-size:19px;line-height:1.65}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{padding-left:var(--navw);background:var(--paper);color:var(--ink);font-family:'Newsreader',Georgia,serif;font-size:19px;line-height:1.65}
 h1,h2,h3,h4{font-family:'Archivo',sans-serif;line-height:1.15}
-.wrap{max-width:860px;margin:0 auto;padding:0 24px}
+.wrap{max-width:none;margin:0;padding:0 clamp(24px,5vw,88px)}
 a{color:var(--cobalt)}
 p{margin:0 0 1.1em}
 strong{font-weight:600}
@@ -38,7 +39,7 @@ strong{font-weight:600}
 header{padding:72px 0 48px;border-bottom:1px solid var(--line)}
 .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
 header h1{font-size:clamp(34px,6vw,58px);font-weight:800;letter-spacing:-.02em;margin-bottom:18px}
-header .sub{font-size:21px;color:var(--muted);max-width:640px}
+header .sub{font-size:21px;color:var(--muted)}
 .readtime{display:inline-block;margin-top:20px;font-family:var(--mono);font-size:13px;background:var(--cobalt-soft);color:var(--cobalt);padding:6px 12px;border-radius:999px}
 
 /* token demo */
@@ -72,7 +73,8 @@ section h3{font-size:21px;font-weight:700;margin:34px 0 12px}
 /* diagrams */
 figure{margin:28px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 18px 14px;overflow-x:auto}
 figcaption{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:10px;text-align:center}
-figure svg{display:block;margin:0 auto;max-width:100%;height:auto}
+figure svg{display:block;margin:0 auto;width:100%;max-width:980px;height:auto}
+figure svg.wide{max-width:none}
 .dg-box{fill:#fff;stroke:var(--ink);stroke-width:1.5;rx:8}
 .dg-boxc{fill:var(--cobalt-soft);stroke:var(--cobalt);stroke-width:1.5}
 .dg-boxt{fill:var(--teal-soft);stroke:var(--teal);stroke-width:1.5}
@@ -102,20 +104,80 @@ td:first-child{font-family:var(--mono);font-size:14px;white-space:nowrap;color:v
 
 footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
 
+
+/* ===== floating left menu ===== */
+#sidenav{position:fixed;left:16px;top:50%;transform:translateY(-50%);width:200px;z-index:20;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px;max-height:calc(100vh - 32px);overflow-y:auto}
+#sidenav .navtitle{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:6px 10px 8px}
+#sidenav a{display:block;text-decoration:none;color:var(--ink);font-family:'Archivo',sans-serif;font-size:14px;font-weight:500;line-height:1.25;padding:8px 10px;border-left:3px solid transparent;border-radius:0 8px 8px 0}
+#sidenav a small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--muted);margin-bottom:1px}
+#sidenav a:hover{background:var(--paper)}
+#sidenav a.on{border-left-color:var(--cobalt);background:var(--cobalt-soft);color:var(--cobalt);font-weight:700}
+#sidenav a.on small{color:var(--cobalt)}
+#sidenav a:focus-visible,#navtoggle:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+#navtoggle{display:none}
+
+/* ===== Part 4: agentic or not ===== */
+.notgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:24px 0}
+.notcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px;display:flex;flex-direction:column}
+.notcard h4{font-size:18px;font-weight:800;margin-bottom:2px}
+.notcard .verdict{font-family:var(--mono);font-size:12.5px;color:#B3392B;background:#FBE9E6;border-radius:999px;padding:3px 10px;align-self:flex-start;margin:6px 0 14px}
+.notcard p.why{font-size:16.5px;color:var(--muted);margin:14px 0 0}
+.flow{display:flex;flex-direction:column;align-items:center;gap:0;font-family:'Archivo',sans-serif;font-size:14px;font-weight:700}
+.flow .nd{background:#fff;border:1.5px solid var(--ink);border-radius:8px;padding:7px 14px;text-align:center;min-width:140px}
+.flow .nd small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--muted)}
+.flow .nd.in{background:var(--paper)}
+.flow .nd.llm{background:var(--cobalt-soft);border-color:var(--cobalt);color:var(--cobalt)}
+.flow .nd.src{background:var(--teal-soft);border-color:var(--teal);color:var(--teal)}
+.flow .nd.fix{background:var(--amber-soft);border-color:var(--amber);color:var(--amber)}
+.flow .ar{width:2px;height:16px;background:var(--ink);position:relative;margin:0}
+.flow .ar::after{content:"";position:absolute;bottom:-1px;left:-4px;border:5px solid transparent;border-top:7px solid var(--ink);border-bottom:0}
+.flow .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.flow .row .nd{min-width:0;flex:1 1 90px;padding:7px 8px;font-size:13px}
+
+.agtest{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0 26px}
+.agtest div{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--teal);border-radius:10px;padding:14px 16px;font-size:17px}
+.agtest b{display:block;font-family:'Archivo',sans-serif;font-size:16px;margin-bottom:4px}
+
+.dg-lbl{font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;fill:var(--ink)}
+.dg-lbls{font-family:'JetBrains Mono',monospace;font-size:10.5px;fill:var(--muted)}
+.dg-big{font-family:'Archivo',sans-serif;font-size:17px;font-weight:800;fill:var(--cobalt)}
+
+/* sticky-friendly: nav sits left, content fills the rest */
+@media(min-width:1700px){body{font-size:21px}.step{font-size:18.5px}.step p{font-size:18px}}
+@media(max-width:1100px){.notgrid,.agtest{grid-template-columns:1fr}}
+@media(max-width:900px){
+  :root{--navw:0px}
+  #sidenav{display:none;left:12px;right:12px;top:auto;bottom:70px;transform:none;width:auto;max-height:70vh;box-shadow:0 8px 28px rgba(23,34,46,.18)}
+  #sidenav.open{display:block}
+  #navtoggle{display:flex;align-items:center;gap:8px;position:fixed;left:12px;bottom:14px;z-index:30;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:12px 18px;font-family:'Archivo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(23,34,46,.3)}
+}
+
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-@media(max-width:640px){body{font-size:17.5px}.tokendemo{padding:18px}.step{flex-direction:row}}
+@media(max-width:640px){td:first-child{white-space:normal;overflow-wrap:anywhere}th,td{padding:10px 10px}table{font-size:15.5px}body{font-size:17.5px}.tokendemo{padding:18px}.step{flex-direction:row}}
 </style>
 </head>
 <body>
 <div id="progress"></div>
+<nav id="sidenav" aria-label="Jump to a part of the guide">
+  <div class="navtitle">Jump to</div>
+  <a href="#top"><small>Start</small>Introduction</a>
+  <a href="#part0"><small>Part 0</small>The map</a>
+  <a href="#part1"><small>Part 1</small>The engine</a>
+  <a href="#part2"><small>Part 2</small>Your data (RAG)</a>
+  <a href="#part3"><small>Part 3</small>Acting: agents, MCP, A2A</a>
+  <a href="#part4"><small>Part 4</small>Agentic or not?</a>
+  <a href="#part5"><small>Part 5</small>In the backend</a>
+  <a href="#cheatsheet"><small>Appendix</small>Cheat sheet</a>
+</nav>
+<button id="navtoggle" type="button" aria-expanded="false" aria-controls="sidenav">☰ Contents</button>
 
-<header>
+<header id="top">
   <div class="wrap">
     <div class="eyebrow">A field guide for Nexthinkers</div>
-    <h1>GenAI, explained.<br>No PhD required.</h1>
+    <h1>GenAI, explained. No PhD required.</h1>
     <p class="sub">What actually happens between your prompt and the answer — and what all those acronyms (LLM, RAG, MCP, A2A…) really mean.</p>
-    <p class="byline" style="font-family:var(--mono);font-size:14px;color:var(--muted);margin-top:14px">Created by Antoine Dhaynaut. Last updated on July 23rd 2026.</p>
-    <span class="readtime">≈ 10 min read</span>
+    <p class="byline" style="font-family:var(--mono);font-size:14px;color:var(--muted);margin-top:14px">Created by Antoine Dhaynaut. Last updated on October 30th 2026.<span class="readtime">≈ 15 min read</span> </p>
+    
 
     <div class="howto" style="margin-top:32px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px">
       <h3 style="font-size:17px;margin:0 0 10px">How this guide is built</h3>
@@ -123,7 +185,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
       <div class="analogy" style="margin:0 0 10px"><span class="tag">Analogy</span>A comparison with something you already know from daily life or from IT, to make the concept easy to remember.</div>
       <div class="callout" style="margin:0 0 10px"><span class="tag">Why it matters in practice</span>The practical consequence for your work: what to watch out for, what decision it affects.</div>
       <div class="wild" style="margin:0 0 14px"><span class="tag">Nexthink example</span>Where this concept exists in our own platform (Workspace, AI Insights, Spark…), based on the public documentation and the Global AI Hub.</div>
-      <p style="font-size:17px;margin:0">The guide goes from theory to practice: <strong>Part 0</strong> places GenAI in the AI family, <strong>Part 1</strong> explains the engine itself, <strong>Part 2</strong> shows how it connects to your data, <strong>Part 3</strong> how it takes action, and <strong>Part 4</strong> follows two real prompts through the backend. A one-table summary of all terms is at the end.</p>
+      <p style="font-size:17px;margin:0">The guide goes from theory to practice: <strong>Part 0</strong> places GenAI in the AI family, <strong>Part 1</strong> explains the engine itself, <strong>Part 2</strong> shows how it connects to your data, <strong>Part 3</strong> how it takes action, and <strong>Part 4</strong> teaches you to tell real agentic AI from lookalikes, and <strong>Part 5</strong> follows three real prompts through the backend. A one-table summary of all terms is at the end.</p>
     </div>
 
     <div class="tokendemo" aria-label="Live demo of next-token prediction">
@@ -364,9 +426,208 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
 
 <section id="part4">
   <div class="wrap">
-    <div class="partnum">Part 4 / In the backend</div>
-    <h2>Two prompts, explained step by step</h2>
-    <p>Same chat box, radically different machinery behind it. Here's what actually runs in the backend for a simple prompt versus an agentic one.</p>
+    <div class="partnum">Part 4 / Spotting the real thing</div>
+    <h2>What is (and isn't) agentic AI</h2>
+    <p>"Agentic" has become the most overused word in AI marketing. Customers will hear it attached to chatbots, automation scripts and document search. Before you can have an honest conversation about it, you need a quick way to tell the real thing from the lookalikes. The test is simple: <strong>does the model itself decide what happens next, use tools to act, check its own results, and loop until the goal is met?</strong> If a human-written script or a fixed pipeline makes those decisions instead, it is not agentic, however much AI sits inside it.</p>
+
+    <h3>Three setups that look agentic but are not</h3>
+    <p>All three use an LLM, and all three can be genuinely useful. What they lack is the loop: the path from question to answer is fixed in advance.</p>
+
+    <div class="notgrid">
+      <div class="notcard">
+        <h4>LLM chatbot</h4>
+        <span class="verdict">Not agentic: one pass, no tools</span>
+        <div class="flow" role="img" aria-label="Flow: query, system prompt, LLM, output">
+          <div class="nd in">Query</div><div class="ar"></div>
+          <div class="nd fix">System prompt<small>standing instructions</small></div><div class="ar"></div>
+          <div class="nd llm">LLM</div><div class="ar"></div>
+          <div class="nd in">Output</div>
+        </div>
+        <p class="why">The model answers once, from what it learned in training. It cannot look anything up, take an action or correct itself.</p>
+      </div>
+
+      <div class="notcard">
+        <h4>RPA with an LLM step</h4>
+        <span class="verdict">Not agentic: a script holds the steering wheel</span>
+        <div class="flow" role="img" aria-label="Flow: query, script trigger, a scripted decision that routes either to executing tools only or to an LLM that uses tools, then output">
+          <div class="nd in">Query</div><div class="ar"></div>
+          <div class="nd fix">Script trigger<small>rule-based decision</small></div><div class="ar"></div>
+          <div class="row" style="width:100%">
+            <div class="nd">Only execute tools<small>human or script</small></div>
+            <div class="nd llm">LLM + use tools<small>one scripted step</small></div>
+          </div><div class="ar"></div>
+          <div class="nd in">Output</div>
+        </div>
+        <p class="why">A person decided in advance which branch runs and when. The LLM may fill in one step, but it never chooses the route.</p>
+      </div>
+
+      <div class="notcard">
+        <h4>Simple RAG</h4>
+        <span class="verdict">Not agentic: fixed retrieve-then-answer</span>
+        <div class="flow" role="img" aria-label="Flow: query, embedding, three sources (knowledge base, vector database, web search data), data augmentation, LLM, output">
+          <div class="nd in">Query</div><div class="ar"></div>
+          <div class="nd fix">Embedding<small>query becomes numbers</small></div><div class="ar"></div>
+          <div class="row" style="width:100%">
+            <div class="nd src">Knowledge base</div>
+            <div class="nd src">Vector DB</div>
+            <div class="nd src">Web search data</div>
+          </div><div class="ar"></div>
+          <div class="nd fix">Data augmentation<small>add results to the prompt</small></div><div class="ar"></div>
+          <div class="nd llm">LLM</div><div class="ar"></div>
+          <div class="nd in">Output</div>
+        </div>
+        <p class="why">Retrieval always happens exactly once, in the same way. The model cannot decide to search again, try another source or change approach.</p>
+      </div>
+    </div>
+
+    <div class="analogy"><span class="tag">Analogy</span>A chatbot is an expert answering from memory over the phone. RPA is a train on fixed rails: fast and reliable, but it will never pick another destination. Simple RAG is an open-book exam where a clerk always hands over the same stack of pages. An agent is the colleague who is given the goal, decides which books to open, picks up the phone when needed, and double-checks the result before replying.</div>
+
+    <h3>What a real agentic system adds</h3>
+    <p>The diagram below shows the building blocks that turn an LLM into an agentic system. At the centre sits an <span class="term">orchestrator</span>: an LLM whose job is not to write the final answer directly but to <strong>decide what to do next</strong>. Around it sit memory, tools, a plan, a feedback loop and, when stakes are high, a human checkpoint. On the right, it can hand work to specialist agents.</p>
+
+    <figure>
+      <svg class="wide" viewBox="0 0 1200 560" role="img" aria-label="Agentic AI architecture: a query enters an orchestrator LLM that is connected to memory, tools, planning, feedback and a human-in-the-loop checkpoint, and that talks through a multi-agent protocol (MCP and A2A) to a coding agent, a retrieval agent and a citation agent. A decision point sends the result to the output or to another agent.">
+        <defs>
+          <marker id="arrk" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#17222E"/></marker>
+          <marker id="arrk2" markerWidth="10" markerHeight="10" refX="1" refY="4.5" orient="auto-start-reverse"><path d="M0,0 L8,4.5 L0,9 z" fill="#17222E"/></marker>
+        </defs>
+
+        <!-- dashed system boundary -->
+        <rect x="150" y="14" width="1040" height="532" rx="16" fill="none" stroke="#2B50D8" stroke-width="1.5" stroke-dasharray="7 6"/>
+        <text class="dg-big" x="170" y="40">Agentic system</text>
+
+        <!-- Query -->
+        <circle cx="50" cy="268" r="16" fill="#fff" stroke="#17222E" stroke-width="1.5"/>
+        <circle cx="50" cy="263" r="5" fill="#17222E"/><path d="M41,277 Q50,266 59,277" fill="none" stroke="#17222E" stroke-width="1.5"/>
+        <text class="dg-lbl" x="50" y="306" text-anchor="middle">Query</text>
+        <line x1="68" y1="268" x2="262" y2="268" stroke="#17222E" stroke-width="1.5" marker-end="url(#arrk)"/>
+
+        <!-- Memory -->
+        <rect x="200" y="70" width="150" height="62" rx="10" fill="#E4F2F0" stroke="#0E8A7D" stroke-width="1.5"/>
+        <text class="dg-lbl" x="275" y="97" text-anchor="middle" fill="#0E8A7D">Memory</text>
+        <text class="dg-lbls" x="275" y="115" text-anchor="middle">what happened so far</text>
+        <!-- Tools -->
+        <rect x="380" y="70" width="150" height="62" rx="10" fill="#FBF0DE" stroke="#C97B10" stroke-width="1.5"/>
+        <text class="dg-lbl" x="455" y="97" text-anchor="middle" fill="#C97B10">Tools</text>
+        <text class="dg-lbls" x="455" y="115" text-anchor="middle">search · query · act</text>
+
+        <!-- Orchestrator -->
+        <rect x="262" y="212" width="236" height="112" rx="14" fill="#E8EDFB" stroke="#2B50D8" stroke-width="2.2"/>
+        <text class="dg-lbl" x="380" y="256" text-anchor="middle" fill="#2B50D8" style="font-size:17px">Orchestrator</text>
+        <text class="dg-lbls" x="380" y="278" text-anchor="middle">an LLM that decides</text>
+        <text class="dg-lbls" x="380" y="294" text-anchor="middle">what to do next</text>
+
+        <!-- links memory/tools <-> orchestrator -->
+        <line x1="300" y1="134" x2="330" y2="210" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+        <line x1="440" y1="134" x2="420" y2="210" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+
+        <!-- Planning -->
+        <rect x="165" y="360" width="185" height="62" rx="10" fill="#fff" stroke="#17222E" stroke-width="1.5"/>
+        <text class="dg-lbl" x="257" y="387" text-anchor="middle">Planning</text>
+        <text class="dg-lbls" x="257" y="405" text-anchor="middle">break the goal into steps</text>
+        <line x1="320" y1="360" x2="340" y2="326" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+
+        <!-- Feedback -->
+        <rect x="390" y="352" width="190" height="52" rx="10" fill="#fff" stroke="#17222E" stroke-width="1.5"/>
+        <text class="dg-lbl" x="485" y="376" text-anchor="middle">Feedback</text>
+        <text class="dg-lbls" x="485" y="392" text-anchor="middle">react &amp; reflect</text>
+        <line x1="430" y1="352" x2="420" y2="326" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+
+        <!-- Human in the loop -->
+        <rect x="390" y="416" width="190" height="52" rx="10" fill="#FBF0DE" stroke="#C97B10" stroke-width="1.5"/>
+        <text class="dg-lbl" x="485" y="440" text-anchor="middle" fill="#C97B10">Human-in-the-loop</text>
+        <text class="dg-lbls" x="485" y="456" text-anchor="middle">approve · correct · stop</text>
+        <line x1="485" y1="404" x2="485" y2="414" stroke="#17222E" stroke-width="1.5"/>
+
+        <!-- decision diamond -->
+        <path d="M340,498 L370,474 L400,498 L370,522 Z" fill="#2B50D8" stroke="#2B50D8" stroke-width="1.5"/>
+        <text class="dg-lbls" x="370" y="502" text-anchor="middle" style="fill:#fff;font-size:10px">done?</text>
+        <path d="M370,326 L370,472" fill="none" stroke="#17222E" stroke-width="1.5" marker-end="url(#arrk)"/>
+        <path d="M485,468 L485,498 L402,498" fill="none" stroke="#17222E" stroke-width="1.5" marker-end="url(#arrk)"/>
+
+        <!-- Output -->
+        <line x1="338" y1="498" x2="108" y2="498" stroke="#17222E" stroke-width="1.5" marker-end="url(#arrk)"/>
+        <text class="dg-lbl" x="60" y="503" text-anchor="middle">Output</text>
+        <text class="dg-lbls" x="222" y="488" text-anchor="middle">yes: answer</text>
+
+        <!-- Agent 1 (not done: delegate) -->
+        <text class="dg-lbls" x="370" y="540" text-anchor="middle">not yet: loop again or delegate</text>
+
+        <!-- Multi-agent protocol panel -->
+        <rect x="640" y="60" width="210" height="440" rx="12" fill="#fff" stroke="#17222E" stroke-width="1.5"/>
+        <text class="dg-lbl" x="745" y="88" text-anchor="middle">Multi-agent protocol</text>
+        <text class="dg-lbls" x="745" y="106" text-anchor="middle">MCP + A2A</text>
+        <rect x="656" y="128" width="178" height="96" rx="8" fill="#E8EDFB" stroke="#2B50D8" stroke-width="1.3"/>
+        <text class="dg-lbl" x="745" y="162" text-anchor="middle">Discover</text><text class="dg-lbls" x="745" y="182" text-anchor="middle">what each agent</text><text class="dg-lbls" x="745" y="198" text-anchor="middle">can do</text>
+        <rect x="656" y="240" width="178" height="96" rx="8" fill="#E8EDFB" stroke="#2B50D8" stroke-width="1.3"/>
+        <text class="dg-lbl" x="745" y="282" text-anchor="middle">Share tasks</text><text class="dg-lbls" x="745" y="304" text-anchor="middle">hand off the work</text>
+        <rect x="656" y="352" width="178" height="96" rx="8" fill="#E8EDFB" stroke="#2B50D8" stroke-width="1.3"/>
+        <text class="dg-lbl" x="745" y="388" text-anchor="middle">Update task info</text><text class="dg-lbls" x="745" y="410" text-anchor="middle">report progress</text><text class="dg-lbls" x="745" y="426" text-anchor="middle">and results</text>
+
+        <!-- orchestrator <-> protocol -->
+        <line x1="498" y1="268" x2="638" y2="268" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+        <!-- Tools <-> protocol (MCP) -->
+        <line x1="532" y1="101" x2="638" y2="101" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+        <text class="dg-lbls" x="585" y="92" text-anchor="middle">MCP</text>
+
+        <!-- Specialist agents -->
+        <rect x="920" y="60" width="250" height="124" rx="12" fill="#E4F2F0" stroke="#0E8A7D" stroke-width="1.5"/>
+        <text class="dg-lbl" x="1045" y="92" text-anchor="middle" fill="#0E8A7D">Coding agent</text>
+        <text class="dg-lbls" x="1045" y="112" text-anchor="middle">writes and runs code</text>
+        <text class="dg-lbls" x="1045" y="150" text-anchor="middle">example framework: LangChain</text>
+
+        <rect x="920" y="218" width="250" height="124" rx="12" fill="#E4F2F0" stroke="#0E8A7D" stroke-width="1.5"/>
+        <text class="dg-lbl" x="1045" y="250" text-anchor="middle" fill="#0E8A7D">Retrieval agent</text>
+        <text class="dg-lbls" x="1045" y="270" text-anchor="middle">finds the right documents</text>
+        <text class="dg-lbls" x="1045" y="308" text-anchor="middle">example framework: LlamaIndex</text>
+
+        <rect x="920" y="376" width="250" height="124" rx="12" fill="#E4F2F0" stroke="#0E8A7D" stroke-width="1.5"/>
+        <text class="dg-lbl" x="1045" y="408" text-anchor="middle" fill="#0E8A7D">Citation agent</text>
+        <text class="dg-lbls" x="1045" y="428" text-anchor="middle">attaches sources</text>
+        <text class="dg-lbls" x="1045" y="466" text-anchor="middle">example framework: CrewAI</text>
+
+        <line x1="852" y1="122" x2="918" y2="122" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+        <line x1="852" y1="280" x2="918" y2="280" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+        <line x1="852" y1="438" x2="918" y2="438" stroke="#17222E" stroke-width="1.5" marker-start="url(#arrk2)" marker-end="url(#arrk)"/>
+      </svg>
+      <figcaption>An agentic system: the orchestrator plans, uses memory and tools, reflects on results, asks a human when needed, and delegates to specialist agents over a shared protocol. Concept adapted from a GenAI.works infographic; framework names are examples, not requirements.</figcaption>
+    </figure>
+
+    <h3>The building blocks, in plain words</h3>
+    <table>
+      <thead><tr><th>Block</th><th>What it does</th><th>Everyday comparison</th></tr></thead>
+      <tbody>
+        <tr><td>Orchestrator</td><td>An LLM that reads the goal, chooses the next action, and decides when the job is finished.</td><td>The project manager who assigns work but does not do all of it personally.</td></tr>
+        <tr><td>Memory</td><td>Keeps what was said, tried and found, within the task and sometimes across sessions.</td><td>The case file on the manager's desk.</td></tr>
+        <tr><td>Tools</td><td>Let the agent query systems and take real actions (see MCP in Part 3).</td><td>The apps and permissions given to an employee.</td></tr>
+        <tr><td>Planning</td><td>Splits a big goal into ordered steps and revises the list as results arrive.</td><td>A checklist that gets rewritten when reality changes.</td></tr>
+        <tr><td>Feedback (react &amp; reflect)</td><td>The agent looks at what a tool returned, judges whether it helped, and corrects course.</td><td>Proofreading your own work before sending it.</td></tr>
+        <tr><td>Human-in-the-loop</td><td>A checkpoint where a person approves, edits or stops a sensitive step.</td><td>A manager's sign-off before a change goes to production.</td></tr>
+        <tr><td>Multi-agent protocol</td><td>Lets agents discover each other's skills, share tasks and report back (A2A, built on the tool standards from Part 3).</td><td>The org chart and the ticketing system between teams.</td></tr>
+        <tr><td>Specialist agents</td><td>Narrow agents, for example for code, retrieval or citations, each good at one job.</td><td>Specialists a generalist calls in.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout"><span class="tag">Why it matters in practice</span>Autonomy and risk grow together. The more the model decides, the more you need guardrails, logging and a human checkpoint for sensitive actions. When a customer says "we want agentic AI", a useful first question is: <em>which decisions are you comfortable letting the model make alone, and which need a human?</em> That question steers the conversation to outcomes and governance rather than to buzzwords.</div>
+
+    <h3>A three-question test you can use in any meeting</h3>
+    <div class="agtest">
+      <div><b>Who picks the next step?</b>If the answer is "a script" or "a fixed pipeline", it is automation, not an agent.</div>
+      <div><b>Can it change course?</b>If a tool result can send it down a different path or trigger a retry, there is a loop. If not, there is not.</div>
+      <div><b>Does it act, or only talk?</b>An agent changes something in a real system, with the right permissions and an audit trail.</div>
+    </div>
+
+    <div class="wild"><span class="tag">Nexthink example</span>Run the test on <strong>Spark</strong>, as described in Part 3. It decides how to approach an employee's issue, pulls context from live device data and knowledge sources, and acts through IT-approved remediations. When it cannot resolve the issue, it hands over to the service desk with the full context. That last step is the human-in-the-loop idea applied: autonomy inside guardrails, with a person ready to take over. A plain chatbot that answers from its training data would fail all three questions.</div>
+
+    <div class="callout" style="border-left-color:var(--cobalt);background:var(--cobalt-soft)"><span class="tag" style="color:var(--cobalt)">The thread to remember</span>Chatbots, RPA and simple RAG follow a path somebody drew in advance. An agentic system chooses its own path, within limits you set. The LLM is the same in both cases; what changes is the loop, the tools and the guardrails built around it.</div>
+  </div>
+</section>
+
+<section id="part5">
+  <div class="wrap">
+    <div class="partnum">Part 5 / In the backend</div>
+    <h2>Three prompts, explained step by step</h2>
+    <p>Same chat box, radically different machinery behind it. Here's what actually runs in the backend for a simple prompt, a prompt grounded in your documents (RAG), and an agentic one.</p>
 
     <h3>Example 1 — Pure LLM (no tools, no data)</h3>
     <div class="trace">
@@ -377,14 +638,24 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
       <div class="step"><div class="n">4</div><div><h4>Done</h4><p>The model emits a special "stop" token. Total time: 2–5 seconds. <strong>Nothing was looked up.</strong> The email is good because millions of apology emails shaped the model's sense of what one looks like.</p></div></div>
     </div>
 
-    <h3>Example 2 — Agentic + RAG (tools and your data)</h3>
+    <h3>Example 2 — LLM + RAG (your documents, but not agentic)</h3>
+    <div class="trace">
+      <div class="prompt"><span class="who">You type</span>"What does our runbook say about renewing an expired certificate?"</div>
+      <div class="step"><div class="n">1</div><div><h4>Embed the question</h4><p>The pipeline converts your question into an embedding, a list of numbers that captures its meaning. This step is hard-wired: <strong>every</strong> question goes through it, whatever it says.</p></div></div>
+      <div class="step"><div class="n t">2</div><div><h4>Retrieve</h4><p>The vector database returns the 3 runbook passages whose meaning is closest to the question. The model has not been involved yet: the retrieval is performed by the pipeline, once, in a fixed way.</p></div></div>
+      <div class="step"><div class="n a">3</div><div><h4>Augment the prompt</h4><p>The pipeline pastes those passages onto the whiteboard, next to the system prompt and your question, with an instruction such as <code>answer only from the passages below</code>.</p></div></div>
+      <div class="step"><div class="n">4</div><div><h4>Generate, one token at a time</h4><p>From here it is Example 1 again: the LLM predicts the answer token by token, this time with the right text in front of it. The answer is grounded and can quote its source, for example <em>[source: cert-renewal-runbook §3]</em>. Total time: a few seconds.</p></div></div>
+      <div class="step"><div class="n">5</div><div><h4>Why it is not agentic</h4><p>The model never decided anything. It did not choose to search, did not check whether the passages were sufficient, and could not try a second query or call another system. Ask this setup "How many P1 incidents did we have last month?" and it will still retrieve runbook text, which does not contain the answer. It will say it does not know, or worse, <strong>improvise a number</strong>. That gap is exactly what Example 3 closes.</p></div></div>
+    </div>
+
+    <h3>Example 3 — Agentic + RAG (tools and your data)</h3>
     <div class="trace">
       <div class="prompt"><span class="who">You type</span>"How many P1 incidents did we have last month, and what does our runbook say about the most frequent root cause?"</div>
       <div class="step"><div class="n">1</div><div><h4>Plan</h4><p>The LLM reads the question plus a list of tools it's been given (via MCP, for example: <code>query_itsm</code>, <code>search_runbooks</code>). It decides this needs two steps and can't be answered from memory.</p></div></div>
       <div class="step"><div class="n a">2</div><div><h4>Tool call #1 — live data</h4><p>It emits a structured request: <code>query_itsm(priority="P1", period="last_month")</code>. The platform executes it against the real ITSM system and pastes the result — <code>17 incidents, top cause: expired certificates (6)</code> — onto the whiteboard.</p></div></div>
       <div class="step"><div class="n t">3</div><div><h4>Tool call #2 — RAG</h4><p>Now it calls <code>search_runbooks("expired certificate renewal procedure")</code>. Behind that tool: the query is embedded, the vector DB returns the 3 closest runbook chunks, and those paragraphs land on the whiteboard too.</p></div></div>
       <div class="step"><div class="n">4</div><div><h4>Verify &amp; synthesize</h4><p>The model now answers using only what's on the whiteboard: "17 P1s; most frequent cause was expired certificates (6 cases); the runbook prescribes… <em>[source: cert-renewal-runbook §3]</em>." The numbers are real because they were fetched, not remembered.</p></div></div>
-      <div class="step"><div class="n">5</div><div><h4>The difference</h4><p>Ask Example 1's setup this question and it will <strong>hallucinate a plausible number</strong>. Ask Example 2's and it retrieves the truth. Same model — the architecture around it makes it trustworthy.</p></div></div>
+      <div class="step"><div class="n">5</div><div><h4>The difference</h4><p>Ask Example 1's setup this question and it will <strong>hallucinate a plausible number</strong>. Ask Example 2's and it retrieves runbook text that cannot contain the number. Ask Example 3's and it fetches the truth. Same model — the architecture around it makes the difference.</p></div></div>
     </div>
   </div>
 </section>
@@ -396,23 +667,26 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
     <table>
       <thead><tr><th>Term</th><th>In one sentence</th></tr></thead>
       <tbody>
-        <tr><td>ML</td><td>Programs that learn patterns from examples instead of hand-written rules; outputs labels, scores, predictions.</td></tr>
-        <tr><td>GenAI</td><td>The branch of ML whose output is new content — text, code, images — rather than a classification.</td></tr>
-        <tr><td>LLM</td><td>A model trained on massive text to predict the next token, over and over.</td></tr>
-        <tr><td>Token</td><td>The chunk of text (~3–4 chars) models actually read, write, and bill by.</td></tr>
+        <tr><td>Agent / Agentic</td><td>An LLM in a loop with tools: plan, act, observe, repeat.</td></tr>
+        <tr><td>Agent2Agent</td><td>Protocol for agents to discover each other and delegate tasks.</td></tr>
         <tr><td>Context window</td><td>The maximum amount of text the model can consider at once.</td></tr>
-        <tr><td>Hallucination</td><td>A fluent, confident answer that happens to be wrong.</td></tr>
-        <tr><td>Temperature</td><td>The randomness dial: low = consistent and repeatable, high = varied and creative.</td></tr>
-        <tr><td>Training / inference</td><td>Training builds the model once in the lab; inference is every use of the frozen model. Prompts don't retrain it.</td></tr>
+        <tr><td>Embedding</td><td>Text converted to numbers so that similar meanings are numerically close.</td></tr>
         <tr><td>Fine-tuning</td><td>Extra training on your examples to change the model's default behavior.</td></tr>
+        <tr><td>GenAI</td><td>The branch of ML whose output is new content — text, code, images — rather than a classification.</td></tr>
+        <tr><td>Hallucination</td><td>A fluent, confident answer that happens to be wrong.</td></tr>
+        <tr><td>Human-in-the-loop</td><td>A checkpoint where a person approves, corrects or stops an agent's action before it takes effect.</td></tr>
+        <tr><td>LLM</td><td>A model trained on massive text to predict the next token, over and over.</td></tr>
+        <tr><td>MCP</td><td>Open standard connecting any AI to any tool or data source, built once.</td></tr>
+        <tr><td>ML</td><td>Programs that learn patterns from examples instead of hand-written rules; outputs labels, scores, predictions.</td></tr>
         <tr><td>Multimodal</td><td>A model that also understands images, audio, and documents, not just text.</td></tr>
         <tr><td>Open-weight vs proprietary</td><td>Self-host a downloadable model for control, or use a vendor's frontier model via API for quality and convenience.</td></tr>
-        <tr><td>Embedding</td><td>Text converted to numbers so that similar meanings are numerically close.</td></tr>
-        <tr><td>Vector database</td><td>A store optimized for "find me content similar to this."</td></tr>
+        <tr><td>Orchestrator</td><td>The LLM at the centre of an agentic system that plans, picks tools, delegates to other agents and decides when the job is done.</td></tr>
         <tr><td>RAG</td><td>Retrieve relevant documents first, then let the LLM answer from them.</td></tr>
-        <tr><td>Agent / Agentic</td><td>An LLM in a loop with tools: plan, act, observe, repeat.</td></tr>
-        <tr><td>MCP</td><td>Open standard connecting any AI to any tool or data source, built once.</td></tr>
-        <tr><td>Agent2Agent</td><td>Protocol for agents to discover each other and delegate tasks.</td></tr>
+        <tr><td>RPA</td><td>Scripted automation that follows fixed rules; it can call an LLM for one step but does not choose its own path.</td></tr>
+        <tr><td>Temperature</td><td>The randomness dial: low = consistent and repeatable, high = varied and creative.</td></tr>
+        <tr><td>Token</td><td>The chunk of text (~3–4 chars) models actually read, write, and bill by.</td></tr>
+        <tr><td>Training / inference</td><td>Training builds the model once in the lab; inference is every use of the frozen model. Prompts don't retrain it.</td></tr>
+        <tr><td>Vector database</td><td>A store optimized for "find me content similar to this."</td></tr>
       </tbody>
     </table>
   </div>
@@ -420,7 +694,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
 
 <footer>
   <div class="wrap">
-    <p>GenAI explained — created by Antoine Dhaynaut. Last updated on July 23rd 2026.</p>
+    <p>GenAI explained — created by Antoine Dhaynaut. Last updated on October 30th 2026.</p>
   </div>
 </footer>
 
@@ -468,7 +742,9 @@ addEventListener('scroll',()=>{
   const svg=document.createElementNS(svgNS,'svg');
   svg.setAttribute('viewBox','0 0 '+W+' '+H);
   svg.setAttribute('width','100%');
-  svg.style.maxWidth='100%';
+  svg.style.maxWidth='980px';
+  svg.style.display='block';
+  svg.style.margin='0 auto';
   host.appendChild(svg);
 
   // scenario: prompt tokens, then a fixed sequence of predicted tokens with candidate distributions
@@ -637,6 +913,23 @@ addEventListener('scroll',()=>{
   } else {
     setTimeout(cycle,600);
   }
+})();
+
+// ===== floating menu: highlight current part + mobile toggle =====
+(function(){
+  const nav=document.getElementById('sidenav'), tg=document.getElementById('navtoggle');
+  if(!nav) return;
+  const links=[...nav.querySelectorAll('a')];
+  const targets=links.map(a=>document.querySelector(a.getAttribute('href')));
+  function update(){
+    const y=window.scrollY+window.innerHeight*0.3;
+    let cur=0;
+    targets.forEach((t,i)=>{ if(t && t.getBoundingClientRect().top+window.scrollY<=y) cur=i; });
+    links.forEach((a,i)=>{ a.classList.toggle('on',i===cur); if(i===cur) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); });
+  }
+  addEventListener('scroll',update,{passive:true}); addEventListener('resize',update); update();
+  tg.addEventListener('click',()=>{ const o=nav.classList.toggle('open'); tg.setAttribute('aria-expanded',o); });
+  links.forEach(a=>a.addEventListener('click',()=>{ nav.classList.remove('open'); tg.setAttribute('aria-expanded','false'); }));
 })();
 </script>
 </body>
