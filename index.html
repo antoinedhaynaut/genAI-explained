@@ -38,15 +38,17 @@ strong{font-weight:600}
 /* hero */
 header{padding:72px 0 48px;border-bottom:1px solid var(--line)}
 .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
+.lastupdate{font-family:var(--mono);font-size:13px;color:var(--muted);margin:-8px 0 16px}
 header h1{font-size:clamp(34px,6vw,58px);font-weight:800;letter-spacing:-.02em;margin-bottom:18px}
 header .sub{font-size:21px;color:var(--muted)}
 
 /* token demo */
-.tokendemo{margin:36px 0 0;background:var(--ink);border-radius:12px;padding:26px 28px;color:#E8EDF2;font-family:var(--mono);font-size:16px;line-height:1.9}
-.tokendemo .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8FA0B0;margin-bottom:10px}
+.tokendemo{margin:36px 0 0;background:var(--ink);border-radius:12px;padding:26px 28px;color:#E8EDF2;font-family:var(--mono);font-size:16px;line-height:1.9;height:227px;overflow:hidden}
+.tokendemo .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8FA0B0;margin-bottom:10px;height:20px;overflow:hidden;white-space:nowrap}
+#sentence{height:62px;overflow:hidden}
 .tok{display:inline-block;padding:1px 5px;margin:0 1px;border-radius:4px;background:#243444}
 .tok.next{background:var(--cobalt);color:#fff}
-.cands{margin-top:14px;padding-top:14px;border-top:1px dashed #3A4A5A;font-size:14px;color:#AFC0CE}
+.cands{margin-top:14px;padding-top:14px;border-top:1px dashed #3A4A5A;font-size:14px;color:#AFC0CE;height:69px;overflow:hidden}
 .cands span{display:inline-block;margin-right:16px}
 .cands b{color:#fff;font-weight:600}
 .pct{color:#7BD8C9}
@@ -150,13 +152,20 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
 .agtest div{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--teal);border-radius:10px;padding:14px 16px;font-size:17px}
 .agtest b{display:block;font-family:'Archivo',sans-serif;font-size:16px;margin-bottom:4px}
 
+/* Part 3: chatbot vs agentic pair */
+.agpair{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:18px 0 22px}
+.agpair div{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--muted);border-radius:10px;padding:14px 16px;font-size:17px}
+.agpair div.ag{border-top-color:var(--cobalt)}
+.agpair b{display:block;font-family:'Archivo',sans-serif;font-size:16px;margin-bottom:4px}
+.agpair div.ag b{color:var(--cobalt)}
+
 .dg-lbl{font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;fill:var(--ink)}
 .dg-lbls{font-family:'JetBrains Mono',monospace;font-size:10.5px;fill:var(--muted)}
 .dg-big{font-family:'Archivo',sans-serif;font-size:17px;font-weight:800;fill:var(--cobalt)}
 
 /* sticky-friendly: nav sits left, content fills the rest */
 @media(min-width:1700px){body{font-size:21px}.step{font-size:18.5px}.step p{font-size:18px}}
-@media(max-width:1100px){.notgrid,.agtest{grid-template-columns:1fr}}
+@media(max-width:1100px){.notgrid,.agtest,.agpair{grid-template-columns:1fr}}
 @media(max-width:900px){
   :root{--navw:0px}
   #sidenav{display:none;left:12px;right:12px;top:auto;bottom:70px;transform:none;width:auto;max-height:70vh;box-shadow:0 8px 28px rgba(23,34,46,.18)}
@@ -165,7 +174,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
 }
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-@media(max-width:640px){td:first-child,#cheatsheet td:first-child{white-space:normal;overflow-wrap:anywhere;min-width:0}th,td{padding:10px 10px}table{font-size:15.5px}body{font-size:17.5px}.tokendemo{padding:18px}.step{flex-direction:row}}
+@media(max-width:640px){td:first-child,#cheatsheet td:first-child{white-space:normal;overflow-wrap:anywhere;min-width:0}th,td{padding:10px 10px}table{font-size:15.5px}body{font-size:17.5px}.tokendemo{padding:18px;height:293px}.tokendemo .label{height:42px;white-space:normal}#sentence{height:122px}.step{flex-direction:row}}
 </style>
 </head>
 <body>
@@ -186,9 +195,9 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
 <header id="top">
   <div class="wrap">
     <div class="eyebrow">A field guide for Nexthinkers</div>
+    <div class="lastupdate">Last update: 5 November 2026 · Author: Antoine Dhaynaut</div>
     <h1>GenAI, explained. No PhD required.</h1>
     <p class="sub">What actually happens between your prompt and the answer, and what all those acronyms (LLM, RAG, MCP, A2A…) really mean.</p>
-    <p class="byline" style="font-family:var(--mono);font-size:14px;color:var(--muted);margin-top:14px">Created by Antoine Dhaynaut. Last updated on November 2nd 2026.</p>
 
     <div class="howto" style="margin-top:32px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px">
       <h3 style="font-size:17px;margin:0 0 10px">How this guide is built</h3>
@@ -411,7 +420,14 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
     <div class="keyidea"><span class="tag">Key idea</span>An LLM only predicts text. Everything trustworthy about modern AI comes from the <strong>system built around that predictor</strong>: real data (RAG), real actions (agents and MCP) and real collaboration between agents (A2A).</div>
 
     <h3>Agentic: giving the model hands</h3>
-    <p>A plain LLM can only talk. An <span class="term">agent</span> is an LLM placed inside a loop and given <strong>tools</strong>: search the web, query a database, call an API, run code, send an email. The loop looks like: <em>think → pick a tool → use it → look at the result → decide the next step → repeat until done.</em> "<span class="term">Agentic</span>" describes systems built this way: the model doesn't just answer, it plans and executes multi-step work, adjusting as results come in.</p>
+    <p>A plain LLM can only talk. An <span class="term">agent</span> is an LLM placed inside a loop and given <strong>tools</strong>: search the web, query a database, call an API, run code, send an email. The loop looks like: <em>think → pick a tool → use it → look at the result → decide the next step → repeat until done.</em> "<span class="term">Agentic</span>" describes systems built this way: the model doesn't just answer, it plans and executes multi-step work, adjusting as results come in. The model itself, not a script, chooses each step.</p>
+
+    <div class="agpair">
+      <div><b>LLM chatbot</b>You ask, it answers, and it stops. It cannot look at your systems or act on them, so you take every next step yourself: check the data, test the fix, apply it.</div>
+      <div class="ag"><b>Agentic AI</b>You give a goal: "Find why laptops in one office are slow, and propose a fix for my approval." The agent splits the goal into steps, uses tools (a query on device data, a search in the knowledge base), checks the results, changes its plan if needed, and continues until it has a cause and a proposed fix, or needs your approval.</div>
+    </div>
+    <p>An agent decides its own steps. What those steps can do varies. A <strong>read-only agent</strong> (search, analyze, write a report) changes nothing, so its risk is low. An <strong>acting agent</strong> (send, book, fix, change a setting) changes real systems, so it needs guardrails, approvals and logs.</p>
+
     <div class="analogy"><span class="tag">Analogy</span>A plain LLM is a brilliant consultant on the phone: great advice, but they can't touch anything. An agent is the same consultant sitting at a workstation with your apps open: they can check the ticket queue, run the query, and draft the reply themselves.</div>
 
     <figure>
@@ -473,7 +489,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
     <div class="partnum">Part 4 / Spotting the real thing</div>
     <h2>What is (and isn't) agentic AI</h2>
     <div class="keyidea"><span class="tag">Key idea</span>Chatbots, RPA and simple RAG follow a <strong>path somebody drew in advance</strong>. An agentic system <strong>chooses its own path</strong>, within limits you set. The LLM is the same in both cases; what changes is the loop, the tools and the guardrails built around it.</div>
-    <p>"Agentic" has become the most overused word in AI marketing. Customers will hear it attached to chatbots, automation scripts and document search. Before you can have an honest conversation about it, you need a quick way to tell the real thing from the lookalikes. The test is simple: <strong>does the model itself decide what happens next, use tools to act, check its own results, and loop until the goal is met?</strong> If a human-written script or a fixed pipeline makes those decisions instead, it is not agentic, however much AI sits inside it.</p>
+    <p>"Agentic" has become the most overused word in AI marketing. Customers will hear it attached to chatbots, automation scripts and document search. Before you can have an honest conversation about it, you need a quick way to tell the real thing from the lookalikes. The test is simple: <strong>does the model itself decide what happens next, use tools to get data or take action, check its own results, and loop until the goal is met?</strong> If a human-written script or a fixed pipeline makes those decisions instead, it is not agentic, however much AI sits inside it.</p>
 
     <h3>Three setups that look agentic but are not</h3>
     <p>The three setups are an LLM chatbot, <span class="term">RPA</span> (robotic process automation: scripts that follow fixed rules) with an LLM step, and simple RAG. All three use an LLM, and all three can be genuinely useful. What they lack is the loop: the path from question to answer is fixed in advance.</p>
@@ -638,7 +654,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
     <div class="agtest">
       <div><b>Who picks the next step?</b>If the answer is "a script" or "a fixed pipeline", it is automation, not an agent.</div>
       <div><b>Can it change course?</b>If a tool result can send it down a different path or trigger a retry, there is a loop. If not, there is not.</div>
-      <div><b>Does it act, or only talk?</b>An agent changes something in a real system, with the right permissions and an audit trail.</div>
+      <div><b>Does it use tools, or only talk?</b>An agent gets real data or changes something in a real system through tools. A text-only answer from memory is not agentic. When the tools can change things, the agent needs the right permissions and an audit trail.</div>
     </div>
 
     <div class="wild"><span class="tag">Nexthink example</span>Run the test on <strong>Spark</strong>, as described in Part 3. It decides how to approach an employee's issue, pulls context from live device data and knowledge sources, and acts through IT-approved remediations. When it cannot resolve the issue, it hands over to the service desk with the full context. That last step is the human-in-the-loop idea applied: autonomy inside guardrails, with a person ready to take over. A plain chatbot that answers from its training data would fail all three questions.</div>
@@ -690,7 +706,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
     <table>
       <thead><tr><th>Term</th><th>In one sentence</th></tr></thead>
       <tbody>
-        <tr><td>Agent / Agentic</td><td>An LLM in a loop with tools: plan, act, observe, repeat.</td></tr>
+        <tr><td>Agent / Agentic</td><td>An LLM in a loop with tools that chooses its own steps: plan, use tools, check the results, repeat.</td></tr>
         <tr><td>Agent2Agent (A2A)</td><td>Protocol for agents to discover each other and delegate tasks; complements MCP.</td></tr>
         <tr><td>Context window</td><td>The maximum amount of text the model can consider at once.</td></tr>
         <tr><td>Embedding</td><td>Text converted to numbers so that similar meanings are numerically close.</td></tr>
@@ -720,11 +736,6 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
   </div>
 </section>
 
-<footer>
-  <div class="wrap">
-    <p>GenAI explained, created by Antoine Dhaynaut. Last updated on November 2nd 2026.</p>
-  </div>
-</footer>
 
 <script>
 // reading progress bar
