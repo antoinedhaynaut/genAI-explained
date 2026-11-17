@@ -364,8 +364,10 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
       <thead><tr><th>Option</th><th>What it changes</th><th>Best for</th><th>Main limit</th></tr></thead>
       <tbody>
         <tr><td>Prompting</td><td>The instructions and examples you send with each request.</td><td>Tone, format, simple rules.</td><td>Must fit in the context window, and you pay for it in every request.</td></tr>
+        <tr><td>Skills</td><td>A procedure the model loads when a task matches it.</td><td>Repeated ways of working, house style, checklists.</td><td>Teaches how to work. Not built for large, changing facts.</td></tr>
         <tr><td>RAG</td><td>Relevant parts of your documents, added to each answer.</td><td>Facts that change: manuals, policies, runbooks.</td><td>Only as good as the search. It adds text; it does not change how the model behaves.</td></tr>
         <tr><td>Tools and agents (Part 3)</td><td>Lets the model fetch live data and take actions.</td><td>Current numbers and actions in your systems.</td><td>Needs integration, permissions and safety rules.</td></tr>
+        <tr><td>Distillation</td><td>Trains a small model to copy a large one.</td><td>Cheap, fast answers for one narrow task at high volume.</td><td>Needs good data and tests. Provider terms may forbid it.</td></tr>
         <tr><td>Fine-tuning</td><td>Changes the model's own weights.</td><td>A consistent behavior or style, or a specialized domain at scale.</td><td>Costly. Often not offered for the newest models. Must be redone when the vendor retires the model.</td></tr>
       </tbody>
     </table>
