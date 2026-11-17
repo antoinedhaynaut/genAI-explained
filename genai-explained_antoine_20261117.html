@@ -195,7 +195,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
 <header id="top">
   <div class="wrap">
     <div class="eyebrow">A field guide for Nexthinkers</div>
-    <div class="lastupdate">Last update: 5 November 2026 · Author: Antoine Dhaynaut</div>
+    <div class="lastupdate">Last update: 17 November 2026 · Author: Antoine Dhaynaut</div>
     <h1>GenAI, explained. No PhD required.</h1>
     <p class="sub">What actually happens between your prompt and the answer, and what all those acronyms (LLM, RAG, MCP, A2A…) really mean.</p>
 
@@ -333,8 +333,48 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
     <div class="callout"><span class="tag">Why it matters in practice</span>Most disappointing results come from a vague prompt, not a weak model. Before blaming the model, add context, an example and a format. In an application, the system prompt is where the company's rules live, so it deserves the same review and testing as code.</div>
 
     <h3>Fine-tuning: onboarding the new hire</h3>
-    <p><span class="term">Fine-tuning</span> means taking a trained model and training it a bit more on your own examples (support tickets, your writing style, your product docs) so the behavior becomes second nature. It changes the model itself, which is powerful but heavy. In practice, most companies get further with a good prompt plus RAG (next part) and only fine-tune when they need consistent style or a specialized domain at scale.</p>
+    <div class="keyidea"><span class="tag">Key idea</span>Fine-tuning changes the model's own behavior by training it on your examples. It is powerful, but slow and costly to build and to update. Try prompting, skills and RAG first, and fine-tune only when those are not enough.</div>
+    <p><span class="term">Fine-tuning</span> means taking a trained model and training it a bit more on your own examples, such as support tickets, your writing style or your product documents. The model's weights change, so the new behavior lives inside the model and does not have to be repeated in every request. The usual first alternative is <span class="term">RAG</span>: the system searches your documents and gives the relevant parts to the model before it answers. Part 2 explains RAG in detail.</p>
     <div class="analogy"><span class="tag">Analogy</span>RAG is handing a smart consultant your binder of documentation before the meeting. Fine-tuning is sending them to a three-week internal training. The consultant with the binder is cheaper, faster to update, and usually good enough.</div>
+    <p>Fine-tuning is heavy for three reasons. First, it needs many good examples, and someone must collect and check them. Second, it needs training runs and tests, which cost time and money. Third, it can cause side effects: a model that learns a new habit can lose some of its general skills. With a vendor's model, the tuned version also lasts only as long as the vendor keeps that model running.</p>
+
+    <h3>Open-weight or proprietary: where can you fine-tune?</h3>
+    <p><strong>Not only open-weight models.</strong> With an open-weight model, you train on your own servers. You choose the data, the method and the hardware, and you keep the result. With a proprietary model, the vendor runs the training. You send your data, and you use the tuned version through the vendor's service. In most cases you cannot download it.</p>
+    <p>Access changes often. Check each point below before you start a project. This is the picture in November 2026:</p>
+    <ul class="plainlist">
+      <li><strong>OpenAI</strong> is closing its self-serve fine-tuning. Third-party trackers report that new jobs stop in January 2027. [VERIFY INTERNALLY]</li>
+      <li><strong>Google</strong> still offers training on examples for some Gemini models, through Vertex AI, its enterprise cloud platform for AI. The list of supported models changes often. [VERIFY INTERNALLY]</li>
+      <li><strong>Anthropic</strong> does not offer fine-tuning in its own Claude API. Its only tunable model is Claude 3 Haiku, an older small model, which you can tune only through Amazon Bedrock (AWS's managed service for AI models) in one AWS region.</li>
+    </ul>
+    <p>Vendors rarely open their newest, strongest models to tuning. For a frontier model, the realistic options are therefore the ones below.</p>
+
+    <h3>Distillation: a small student learns from a large teacher</h3>
+    <p><span class="term">Distillation</span> trains a small model, called the <em>student</em>, to copy how a large model, called the <em>teacher</em>, answers. The student studies many of the teacher's answers and learns their patterns. It is smaller, so it is cheaper and faster to run. It rarely matches the teacher on everything, but it can be very good at one narrow task.</p>
+    <p>Why does it work? The teacher has already learned a lot, and its answers show how to handle many cases. A small student can learn that useful behavior without having to learn everything the teacher knows.</p>
+    <ul class="plainlist">
+      <li><strong>Cheaper answers at volume.</strong> The small student handles routine requests, and the large teacher is kept for the hard ones.</li>
+      <li><strong>Training data from a strong model.</strong> The teacher writes example answers, and people check them. The checked answers then train the student.</li>
+    </ul>
+    <div class="callout"><span class="tag">Watch out</span>Many proprietary providers forbid using their model's answers to build a rival model. OpenAI's terms, for example, prohibit that. Distilling a closed model into your own model can therefore break the contract. Open-weight models usually come with licenses that allow it, but each license is different. Ask your legal team before you start.</div>
+
+    <h3>Skills: instructions loaded only when needed</h3>
+    <p><span class="term">Skills</span> are folders of instructions for one kind of task. The main file is called SKILL.md. It describes a procedure, such as how to write an incident report in your team's format. The folder can also hold templates, reference documents and scripts. The model reads the main file only when a request matches the skill, so the instructions do not take up room in every conversation. Claude supports skills in its apps, in its coding tool and on its developer platform.</p>
+    <div class="analogy"><span class="tag">Analogy</span>A skill is a recipe card in a kitchen drawer. The cook takes it out only when making that dish. The rest of the drawer stays closed, and the counter stays clear.</div>
+
+    <h3>The alternatives, from cheapest to most costly</h3>
+    <p>Start at the top. Each option takes more work to build and is harder to change than the one above it. Ask what kind of gap you have. A knowledge gap calls for documents or live data. A habit or format gap calls for instructions or a skill. A cost or behavior gap at high volume can call for distillation or fine-tuning.</p>
+    <table>
+      <thead><tr><th>Option</th><th>What it changes</th><th>Best for</th><th>Main limit</th></tr></thead>
+      <tbody>
+        <tr><td>Prompting</td><td>The instructions and examples you send with each request.</td><td>Tone, format, simple rules.</td><td>Must fit in the context window, and you pay for it in every request.</td></tr>
+        <tr><td>Skills</td><td>A procedure the model loads when a task matches it.</td><td>Repeated ways of working, house style, checklists.</td><td>Teaches how to work. Not built for large, changing facts.</td></tr>
+        <tr><td>RAG</td><td>Relevant parts of your documents, added to each answer.</td><td>Facts that change: manuals, policies, runbooks.</td><td>Only as good as the search. It adds text; it does not change how the model behaves.</td></tr>
+        <tr><td>Tools and agents (Part 3)</td><td>Lets the model fetch live data and take actions.</td><td>Current numbers and actions in your systems.</td><td>Needs integration, permissions and safety rules.</td></tr>
+        <tr><td>Distillation</td><td>Trains a small model to copy a large one.</td><td>Cheap, fast answers for one narrow task at high volume.</td><td>Needs good data and tests. Provider terms may forbid it.</td></tr>
+        <tr><td>Fine-tuning</td><td>Changes the model's own weights.</td><td>A consistent behavior or style, or a specialized domain at scale.</td><td>Costly. Often not offered for the newest models. Must be redone when the vendor retires the model.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><span class="tag">Why it matters in practice</span>Test the cheap options first. You can change a prompt or a skill and see the result the same day. A fine-tuning project needs data preparation, training and testing before you know whether it works. Also check the vendor's current tuning status before you plan one, because it changes often. [VERIFY INTERNALLY]</div>
 
     <h3>Multimodal: beyond text</h3>
     <p>Early LLMs only handled text. A <span class="term">multimodal</span> model also takes images, audio, video, or documents as input, and increasingly produces them as output. Under the hood it's the same trick: a screenshot is converted into tokens the model can process alongside your words. Practically, this is huge for IT: paste a screenshot of an error dialog, a photo of a rack, or an architecture diagram, and ask questions about it directly, with no transcribing.</p>
@@ -350,6 +390,10 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
       <ul>
         <li>Nexthink Global AI Hub, <em>Other GenAI features</em> (Amazon Bedrock, same geographical area, no training on customer data). <a href="https://docs.nexthink.com/legal/global-ai-hub/other-genai-features">docs.nexthink.com</a></li>
         <li>OpenAI, <em>Learning to reason with LLMs</em> (o1), September 2024. <a href="https://openai.com/index/learning-to-reason-with-llms/">openai.com</a></li>
+        <li>Anthropic, <em>Fine-tune Claude 3 Haiku in Amazon Bedrock</em> (generally available 1 November 2024). <a href="https://www.anthropic.com/news/fine-tune-claude-3-haiku-ga">anthropic.com</a></li>
+        <li>Anthropic, <em>Equipping agents for the real world with Agent Skills</em>. <a href="https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills">anthropic.com</a></li>
+        <li>OpenAI, <em>Terms of Use</em> (rules on using output to build competing models). <a href="https://openai.com/api/policies/terms/">openai.com</a></li>
+        <li>Paul Sawers, on OpenAI closing self-serve fine-tuning, May 2026 (republished by Tessl). <a href="https://tessl.io/blog/openai-shutting-fine-tuning-signals-for-enterprise-ai">tessl.io</a> · Third-party tracker of the same timeline, October 2026: <a href="https://www.developersdigest.tech/blog/openai-fine-tuning-shutdown-alternatives">developersdigest.tech</a> [VERIFY INTERNALLY against OpenAI's deprecations page]</li>
       </ul>
     </details>
   </div>
@@ -709,6 +753,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
         <tr><td>Agent / Agentic</td><td>An LLM in a loop with tools that chooses its own steps: plan, use tools, check the results, repeat.</td></tr>
         <tr><td>Agent2Agent (A2A)</td><td>Protocol for agents to discover each other and delegate tasks; complements MCP.</td></tr>
         <tr><td>Context window</td><td>The maximum amount of text the model can consider at once.</td></tr>
+        <tr><td>Distillation</td><td>Training a small "student" model to copy the answers of a large "teacher" model; cheaper and faster to run.</td></tr>
         <tr><td>Embedding</td><td>Text converted to numbers so that similar meanings are numerically close.</td></tr>
         <tr><td>Few-shot examples</td><td>A few examples of good output placed in the prompt to show the model what to do.</td></tr>
         <tr><td>Fine-tuning</td><td>Extra training on your examples to change the model's default behavior.</td></tr>
@@ -726,6 +771,7 @@ footer{padding:44px 0 64px;color:var(--muted);font-size:16px}
         <tr><td>RAG</td><td>Retrieve relevant documents first, then let the LLM answer from them.</td></tr>
         <tr><td>Reasoning model</td><td>A model trained to write intermediate "thinking" steps before its answer; better on hard problems, slower and more expensive.</td></tr>
         <tr><td>RPA</td><td>Scripted automation that follows fixed rules; it can call an LLM for one step but does not choose its own path.</td></tr>
+        <tr><td>Skills</td><td>Folders of instructions (a SKILL.md file, plus optional templates and scripts) that the model loads only when a task needs them.</td></tr>
         <tr><td>System prompt</td><td>Standing instructions from the application (role, rules, tone, format), placed before every conversation.</td></tr>
         <tr><td>Temperature</td><td>The randomness dial: low = consistent and repeatable, high = varied and creative. Not available on the newest reasoning models.</td></tr>
         <tr><td>Token</td><td>The chunk of text (~3–4 chars) models actually read, write, and bill by.</td></tr>
